@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useId } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import type { Task } from "@/lib/supabase/database.types";
 import {
   TASK_DESCRIPTION_MAX_LENGTH,
@@ -89,14 +90,14 @@ export function TaskEditForm({
           >
             Description
           </label>
-          <span className="text-xs text-slate-400">Optional</span>
+          <span className="text-xs text-slate-600">Optional</span>
         </div>
         <textarea
           aria-describedby={
             descriptionError ? `${descriptionId}-error` : undefined
           }
           aria-invalid={Boolean(descriptionError)}
-          className="clearlooks-input min-h-32 w-full resize-y border px-3.5 py-3 text-sm outline-none transition aria-invalid:border-red-500"
+          className="clearlooks-input min-h-28 w-full resize-y border px-3.5 py-3 text-sm outline-none transition aria-invalid:border-red-500"
           defaultValue={task.description ?? ""}
           disabled={pending}
           id={descriptionId}
@@ -184,7 +185,7 @@ export function TaskEditForm({
           >
             Due date
           </label>
-          <span className="text-xs text-slate-400">Optional</span>
+          <span className="text-xs text-slate-600">Optional</span>
         </div>
         <input
           aria-describedby={dueDateError ? `${dueDateId}-error` : undefined}
@@ -204,12 +205,9 @@ export function TaskEditForm({
       </div>
 
       {state.message && state.status === "error" ? (
-        <p
-          className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-sm text-red-800"
-          role="alert"
-        >
+        <StatusMessage tone="error">
           {state.message}
-        </p>
+        </StatusMessage>
       ) : null}
 
       <div className="flex justify-end gap-2 border-t border-slate-200 pt-4">

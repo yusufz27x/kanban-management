@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import {
   TASK_DESCRIPTION_MAX_LENGTH,
   TASK_PRIORITIES,
@@ -51,7 +52,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
             aria-describedby={titleError ? "task-title-error" : undefined}
             aria-invalid={Boolean(titleError)}
             autoFocus
-            className="clearlooks-input h-11 w-full border px-3.5 text-sm outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500"
+            className="clearlooks-input h-11 w-full border px-3.5 text-sm outline-none transition placeholder:text-slate-500 aria-invalid:border-red-500"
             disabled={pending}
             id="task-title"
             maxLength={TASK_TITLE_MAX_LENGTH}
@@ -74,14 +75,14 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
             >
               Description
             </label>
-            <span className="text-xs text-slate-400">Optional</span>
+            <span className="text-xs text-slate-600">Optional</span>
           </div>
           <textarea
             aria-describedby={
               descriptionError ? "task-description-error" : undefined
             }
             aria-invalid={Boolean(descriptionError)}
-            className="clearlooks-input min-h-28 w-full resize-y border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500"
+            className="clearlooks-input min-h-28 w-full resize-y border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-500 aria-invalid:border-red-500"
             disabled={pending}
             id="task-description"
             maxLength={TASK_DESCRIPTION_MAX_LENGTH}
@@ -141,7 +142,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
               >
                 Due date
               </label>
-              <span className="text-xs text-slate-400">Optional</span>
+              <span className="text-xs text-slate-600">Optional</span>
             </div>
             <input
               aria-describedby={
@@ -166,17 +167,11 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
         </div>
 
         {state.message ? (
-          <p
-            aria-live="polite"
-            className={`rounded-xl border px-3.5 py-3 text-sm ${
-              state.status === "success"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-red-200 bg-red-50 text-red-800"
-            }`}
-            role={state.status === "error" ? "alert" : "status"}
+          <StatusMessage
+            tone={state.status === "success" ? "success" : "error"}
           >
             {state.message}
-          </p>
+          </StatusMessage>
         ) : null}
 
         <button

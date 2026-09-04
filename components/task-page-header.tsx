@@ -8,7 +8,7 @@ type TaskPageHeaderProps = {
 export function TaskPageHeader({ action, label }: TaskPageHeaderProps) {
   return (
     <header className="clearlooks-bar border-b">
-      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
         {label ? (
           <p className="min-w-0 truncate text-sm font-semibold text-slate-800">
             {label}

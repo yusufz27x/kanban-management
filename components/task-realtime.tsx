@@ -118,7 +118,7 @@ export function TaskRealtime({
   return (
     <p
       aria-live="polite"
-      className="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-slate-500"
+      className="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-slate-600"
     >
       <span
         aria-hidden="true"

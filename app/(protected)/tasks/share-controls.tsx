@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import type { ShareActionState } from "@/lib/validation/share";
 
 import { updateSharing } from "./share-actions";
@@ -10,13 +11,27 @@ type ShareControlsProps = {
   initialShare: ShareActionState;
 };
 
+type ShareFeedback = {
+  message: string;
+  tone: "error" | "neutral" | "success";
+};
+
 export function ShareControls({ initialShare }: ShareControlsProps) {
   const [state, formAction, pending] = useActionState(
     updateSharing,
     initialShare,
   );
-  const [copyMessage, setCopyMessage] = useState<string>();
+  const [copyFeedback, setCopyFeedback] = useState<ShareFeedback>();
   const sharePath = state.token ? `/share/${state.token}` : null;
+  const feedback: ShareFeedback | undefined = pending
+    ? { message: "Updating sharing…", tone: "neutral" }
+    : copyFeedback ??
+      (state.message
+        ? {
+            message: state.message,
+            tone: state.status === "error" ? "error" : "success",
+          }
+        : undefined);
 
   async function copyShareUrl() {
     if (!sharePath) {
@@ -27,9 +42,12 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
       await navigator.clipboard.writeText(
         new URL(sharePath, window.location.origin).toString(),
       );
-      setCopyMessage("Share URL copied.");
+      setCopyFeedback({ message: "Share URL copied.", tone: "success" });
     } catch {
-      setCopyMessage("Copy failed. Select the URL and copy it manually.");
+      setCopyFeedback({
+        message: "Copy failed. Select the URL and copy it manually.",
+        tone: "error",
+      });
     }
   }
 
@@ -42,11 +60,8 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
           </p>
         </div>
         <span
-          className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${
-            state.enabled
-              ? "border-blue-200 bg-blue-50 text-blue-700"
-              : "border-slate-200 bg-slate-50 text-slate-600"
-          }`}
+          className="clearlooks-badge inline-flex w-fit px-2.5 py-1 text-xs font-semibold"
+          data-tone={state.enabled ? "green" : "neutral"}
         >
           {state.enabled ? "On" : "Off"}
         </span>
@@ -55,7 +70,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
       {sharePath ? (
         <div className="mt-5">
           <label
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600"
             htmlFor="share-url"
           >
             Link
@@ -78,7 +93,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
             </button>
           </div>
           {!state.enabled ? (
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-slate-600">
               Link disabled.
             </p>
           ) : null}
@@ -88,7 +103,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
       <form
         action={formAction}
         className="mt-5 flex flex-wrap gap-2"
-        onSubmit={() => setCopyMessage(undefined)}
+        onSubmit={() => setCopyFeedback(undefined)}
       >
         <button
           className={`px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
@@ -116,15 +131,11 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
         ) : null}
       </form>
 
-      <p
-        aria-live="polite"
-        className={`mt-3 min-h-5 text-sm ${
-          state.status === "error" ? "text-red-700" : "text-blue-700"
-        }`}
-        role={state.status === "error" ? "alert" : "status"}
-      >
-        {pending ? "Updating sharing…" : copyMessage || state.message}
-      </p>
+      <div className="mt-3 min-h-12">
+        {feedback ? (
+          <StatusMessage tone={feedback.tone}>{feedback.message}</StatusMessage>
+        ) : null}
+      </div>
     </div>
   );
 }

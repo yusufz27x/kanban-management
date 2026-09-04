@@ -11,7 +11,10 @@ export default function SharedTasksLayout({
     <div className="clearlooks-app min-h-screen">
       <TaskPageHeader
         action={
-          <span className="inline-flex h-9 shrink-0 items-center rounded-full border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-600">
+          <span
+            className="clearlooks-badge inline-flex h-9 shrink-0 items-center px-4 text-sm font-semibold"
+            data-tone="neutral"
+          >
             Read-only
           </span>
         }

@@ -17,7 +17,7 @@ export function TaskBoardHeader({
         {title}
       </h1>
       <div className="sm:text-right">
-        <p className="text-sm font-medium text-slate-500">
+        <p className="text-sm font-medium text-slate-600">
           {count} {count === 1 ? "task" : "tasks"}
         </p>
         {status}

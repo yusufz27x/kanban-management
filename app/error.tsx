@@ -2,7 +2,7 @@
 
 import { TaskRouteError } from "@/components/task-route-error";
 
-export default function SharedTasksError({
+export default function RootError({
   error,
   reset,
 }: {
@@ -12,8 +12,9 @@ export default function SharedTasksError({
   return (
     <TaskRouteError
       error={error}
-      logMessage="Shared task page rendering failed"
+      logMessage="Page rendering failed"
       reset={reset}
+      title="Unable to load page"
     />
   );
 }

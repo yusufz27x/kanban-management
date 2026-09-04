@@ -121,7 +121,7 @@ export function TaskFilters({
         >
           Filters
           {activeFilters.length > 0 ? (
-            <span className="inline-flex min-w-5 justify-center rounded-full bg-white/25 px-1.5 py-0.5 text-xs text-white">
+            <span className="clearlooks-counter inline-flex min-w-5 justify-center px-1.5 py-0.5 text-xs">
               {activeFilters.length}
             </span>
           ) : null}
@@ -134,7 +134,7 @@ export function TaskFilters({
             id={panelId}
           >
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
                 Quick
               </p>
               <div className="mt-2 flex flex-wrap gap-2" role="group">
@@ -155,7 +155,7 @@ export function TaskFilters({
             <div className="mt-4">
               <div>
                 <p
-                  className="text-xs font-semibold uppercase tracking-wide text-slate-500"
+                  className="text-xs font-semibold uppercase tracking-wide text-slate-600"
                   id={statusLabelId}
                 >
                   Status
@@ -191,7 +191,7 @@ export function TaskFilters({
 
               <div className="mt-4">
                 <p
-                  className="text-xs font-semibold uppercase tracking-wide text-slate-500"
+                  className="text-xs font-semibold uppercase tracking-wide text-slate-600"
                   id={priorityLabelId}
                 >
                   Priority
@@ -231,7 +231,7 @@ export function TaskFilters({
             <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-200 pt-3">
               <p
                 aria-live="polite"
-                className="text-xs font-medium text-slate-500"
+                className="text-xs font-medium text-slate-600"
               >
                 {filteredCount} of {totalCount}
               </p>
@@ -246,7 +246,10 @@ export function TaskFilters({
                 </button>
                 <button
                   className="clearlooks-button-primary px-3 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    setOpen(false);
+                    triggerRef.current?.focus();
+                  }}
                   type="button"
                 >
                   Done

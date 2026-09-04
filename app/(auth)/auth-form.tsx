@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import type { AuthActionState } from "@/lib/validation/auth";
 
 type AuthAction = (
@@ -47,7 +48,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
             aria-describedby={emailError ? "email-error" : undefined}
             aria-invalid={Boolean(emailError)}
             autoComplete="email"
-            className="clearlooks-input h-12 w-full border px-4 outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500 aria-invalid:ring-red-100"
+            className="clearlooks-input h-12 w-full border px-4 outline-none transition placeholder:text-slate-500 aria-invalid:border-red-500 aria-invalid:ring-red-100"
             disabled={pending}
             id="email"
             maxLength={254}
@@ -80,7 +81,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
             }
             aria-invalid={Boolean(passwordError)}
             autoComplete={isLogin ? "current-password" : "new-password"}
-            className="clearlooks-input h-12 w-full border px-4 outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500 aria-invalid:ring-red-100"
+            className="clearlooks-input h-12 w-full border px-4 outline-none transition placeholder:text-slate-500 aria-invalid:border-red-500 aria-invalid:ring-red-100"
             disabled={pending}
             id="password"
             maxLength={72}
@@ -102,17 +103,11 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
         </div>
 
         {state.message ? (
-          <div
-            aria-live="polite"
-            className={`rounded-xl border px-4 py-3 text-sm leading-6 ${
-              state.status === "success"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-red-200 bg-red-50 text-red-800"
-            }`}
-            role={state.status === "error" ? "alert" : "status"}
+          <StatusMessage
+            tone={state.status === "success" ? "success" : "error"}
           >
             {state.message}
-          </div>
+          </StatusMessage>
         ) : null}
 
         <button

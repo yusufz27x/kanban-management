@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     follow: false,
     index: false,
   },
-  title: "Shared tasks",
+  title: "Shared Tasks",
 };
 
 export default async function SharedTasksPage({

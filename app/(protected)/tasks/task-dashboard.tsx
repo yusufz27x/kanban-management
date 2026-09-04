@@ -10,6 +10,7 @@ import {
 
 import { TaskBoardHeader } from "@/components/task-board-header";
 import { TaskRealtime } from "@/components/task-realtime";
+import { StatusMessage } from "@/components/status-message";
 import type {
   Task,
   TaskPriority,
@@ -171,7 +172,7 @@ export function TaskDashboard({
 
       <div
         aria-label="Task controls"
-        className="mb-7 flex flex-wrap items-center gap-2"
+        className="flex flex-wrap items-center gap-2"
         role="group"
       >
         <button
@@ -206,9 +207,9 @@ export function TaskDashboard({
       </div>
 
       {moveError ? (
-        <p className="mb-5 text-sm text-red-700" role="alert">
+        <StatusMessage className="mt-5" tone="error">
           {moveError}
-        </p>
+        </StatusMessage>
       ) : null}
 
       <Modal

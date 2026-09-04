@@ -24,7 +24,7 @@ export default async function ProtectedLayout({
         action={
           <form action="/auth/logout" method="post">
             <button
-              className="clearlooks-button shrink-0 px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="clearlooks-button inline-flex h-9 shrink-0 items-center px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
               type="submit"
             >
               Log out

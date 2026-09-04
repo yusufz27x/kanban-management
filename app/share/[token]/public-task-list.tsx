@@ -7,40 +7,25 @@ import {
   TaskFilters,
   type QuickFilter,
 } from "@/app/(protected)/tasks/task-filters";
+import {
+  TaskCardPreview,
+  TaskDetails,
+} from "@/components/task-card-content";
+import {
+  EmptyTaskColumn,
+  TaskColumnFrame,
+} from "@/components/task-column-frame";
 import type {
   PublicTask,
   TaskPriority,
   TaskStatus,
 } from "@/lib/supabase/database.types";
+import { TASK_STATUSES } from "@/lib/tasks/constants";
 import {
-  TASK_PRIORITY_LABELS,
-  TASK_STATUSES,
-  TASK_STATUS_LABELS,
-} from "@/lib/tasks/constants";
-import {
-  formatDateOnly,
   isTaskDueSoon,
   isTaskOverdue,
 } from "@/lib/tasks/dates";
 import { useLocalDate } from "@/lib/tasks/use-local-date";
-
-const priorityBadgeClasses: Record<TaskPriority, string> = {
-  low: "border-sky-200 bg-sky-50 text-sky-700",
-  medium: "border-amber-200 bg-amber-50 text-amber-800",
-  high: "border-red-200 bg-red-50 text-red-700",
-};
-
-const statusBadgeClasses: Record<TaskStatus, string> = {
-  todo: "bg-slate-100 text-slate-700",
-  in_progress: "bg-amber-100 text-amber-800",
-  done: "bg-emerald-100 text-emerald-800",
-};
-
-const columnAccentClasses: Record<TaskStatus, string> = {
-  todo: "bg-slate-400",
-  in_progress: "bg-amber-500",
-  done: "bg-emerald-500",
-};
 
 export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
   const [statusFilters, setStatusFilters] = useState<TaskStatus[]>([]);
@@ -95,19 +80,11 @@ export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
     setQuickFilter("all");
   }
 
-  if (tasks.length === 0) {
-    return (
-      <section className="clearlooks-panel border border-dashed px-6 py-14 text-center">
-        <p className="text-lg font-semibold text-slate-900">No tasks</p>
-      </section>
-    );
-  }
-
   return (
     <>
       <div
         aria-label="Shared task controls"
-        className="mb-7 flex flex-wrap items-center gap-2"
+        className="flex flex-wrap items-center gap-2"
         role="group"
       >
         <TaskFilters
@@ -123,8 +100,8 @@ export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
         />
       </div>
 
-      {filteredTasks.length === 0 ? (
-        <section className="clearlooks-panel border border-dashed px-6 py-12 text-center">
+      {tasks.length > 0 && filteredTasks.length === 0 ? (
+        <section className="clearlooks-panel mt-7 border border-dashed px-6 py-12 text-center">
           <p className="font-semibold text-slate-900">No matches</p>
           <button
             className="clearlooks-button-primary mt-5 px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -135,7 +112,7 @@ export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
           </button>
         </section>
       ) : (
-        <section aria-label="Shared task board">
+        <section aria-label="Shared task board" className="mt-7">
           <div className={`grid items-start gap-4 ${boardGridClasses}`}>
             {visibleStatuses.map((status) => (
               <PublicTaskColumn
@@ -164,43 +141,19 @@ function PublicTaskColumn({
   const headingId = `public-task-column-${status}`;
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="clearlooks-column min-w-0 border p-3 sm:p-4"
+    <TaskColumnFrame
+      count={tasks.length}
+      headingId={headingId}
+      status={status}
     >
-      <header className="flex items-center justify-between gap-3 px-1">
-        <div className="flex min-w-0 items-center gap-2">
-          <span
-            aria-hidden="true"
-            className={`size-2.5 shrink-0 rounded-full ${columnAccentClasses[status]}`}
-          />
-          <h2
-            className="truncate text-sm font-semibold text-slate-900"
-            id={headingId}
-          >
-            {TASK_STATUS_LABELS[status]}
-          </h2>
-        </div>
-        <span
-          aria-label={`${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`}
-          className="clearlooks-card inline-flex min-w-7 justify-center border px-2 py-1 text-xs font-semibold text-slate-600"
-        >
-          {tasks.length}
-        </span>
-      </header>
-
-      <div className="mt-3 space-y-3">
-        {tasks.length > 0 ? (
-          tasks.map((task) => (
-            <PublicTaskCard key={task.id} task={task} today={today} />
-          ))
-        ) : (
-          <div className="clearlooks-card border border-dashed px-4 py-8 text-center">
-            <p className="text-sm font-medium text-slate-500">No tasks</p>
-          </div>
-        )}
-      </div>
-    </section>
+      {tasks.length > 0 ? (
+        tasks.map((task) => (
+          <PublicTaskCard key={task.id} task={task} today={today} />
+        ))
+      ) : (
+        <EmptyTaskColumn />
+      )}
+    </TaskColumnFrame>
   );
 }
 
@@ -213,17 +166,14 @@ function PublicTaskCard({
 }) {
   const [open, setOpen] = useState(false);
   const overdue = isTaskOverdue(task.due_date, task.status, today);
-  const dueSoon = isTaskDueSoon(task.due_date, task.status, today);
-  const dueDate = task.due_date ? formatDateOnly(task.due_date) : "No due date";
   const titleId = `public-task-title-${task.id}`;
 
   return (
     <>
       <article
         aria-labelledby={titleId}
-        className={`clearlooks-card overflow-hidden border transition hover:-translate-y-0.5 ${
-          overdue ? "border-red-300" : "border-slate-200"
-        }`}
+        className="clearlooks-card clearlooks-card-interactive overflow-hidden border transition hover:-translate-y-0.5"
+        data-overdue={overdue}
       >
         <button
           aria-haspopup="dialog"
@@ -231,96 +181,12 @@ function PublicTaskCard({
           onClick={() => setOpen(true)}
           type="button"
         >
-          <div className="flex items-center justify-between gap-3">
-            <span
-              className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${priorityBadgeClasses[task.priority]}`}
-            >
-              {TASK_PRIORITY_LABELS[task.priority]}
-            </span>
-            <span
-              className={`shrink-0 text-right text-xs font-medium ${
-                overdue
-                  ? "text-red-700"
-                  : dueSoon
-                    ? "text-amber-700"
-                    : "text-slate-500"
-              }`}
-            >
-              {overdue ? "Overdue · " : dueSoon ? "Due soon · " : ""}
-              {task.due_date ? (
-                <time dateTime={task.due_date}>{dueDate}</time>
-              ) : (
-                dueDate
-              )}
-            </span>
-          </div>
-          <h3
-            className={`mt-2 line-clamp-2 break-words text-sm font-semibold leading-5 text-slate-950 ${
-              task.status === "done"
-                ? "line-through decoration-slate-400"
-                : ""
-            }`}
-            id={titleId}
-          >
-            {task.title}
-          </h3>
-          {task.description ? (
-            <p className="mt-1.5 line-clamp-2 break-words text-xs leading-5 text-slate-500">
-              {task.description}
-            </p>
-          ) : null}
+          <TaskCardPreview task={task} titleId={titleId} today={today} />
         </button>
       </article>
 
       <Modal onClose={() => setOpen(false)} open={open} title="Task">
-        <div>
-          <div className="flex flex-wrap gap-2">
-            <span
-              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${priorityBadgeClasses[task.priority]}`}
-            >
-              {TASK_PRIORITY_LABELS[task.priority]} priority
-            </span>
-            <span
-              className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadgeClasses[task.status]}`}
-            >
-              {TASK_STATUS_LABELS[task.status]}
-            </span>
-          </div>
-
-          <h3 className="mt-4 break-words text-xl font-semibold text-slate-950">
-            {task.title}
-          </h3>
-
-          {task.description ? (
-            <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">
-              {task.description}
-            </p>
-          ) : (
-            <p className="mt-3 text-sm text-slate-400">No description</p>
-          )}
-
-          <dl className="mt-5 border-y border-slate-200 py-4">
-            <div className="flex items-center justify-between gap-4">
-              <dt className="text-sm font-medium text-slate-500">Due date</dt>
-              <dd
-                className={`text-sm font-semibold ${
-                  overdue
-                    ? "text-red-700"
-                    : dueSoon
-                      ? "text-amber-700"
-                      : "text-slate-800"
-                }`}
-              >
-                {overdue ? "Overdue · " : dueSoon ? "Due soon · " : ""}
-                {task.due_date ? (
-                  <time dateTime={task.due_date}>{dueDate}</time>
-                ) : (
-                  dueDate
-                )}
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <TaskDetails task={task} today={today} />
       </Modal>
     </>
   );

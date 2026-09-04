@@ -20,9 +20,8 @@ export function TaskRouteState({
       id="main-content"
     >
       <section
-        className={`clearlooks-panel border p-8 text-center ${
-          tone === "error" ? "border-red-300" : ""
-        }`}
+        className="clearlooks-panel border p-8 text-center"
+        data-tone={tone}
       >
         <h1 className="text-xl font-semibold text-slate-950">{title}</h1>
         {message ? (

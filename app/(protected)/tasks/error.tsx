@@ -4,16 +4,16 @@ import { TaskRouteError } from "@/components/task-route-error";
 
 export default function TasksError({
   error,
-  retry,
+  reset,
 }: {
   error: Error & { digest?: string };
-  retry: () => void;
+  reset: () => void;
 }) {
   return (
     <TaskRouteError
       error={error}
       logMessage="Task dashboard rendering failed"
-      retry={retry}
+      reset={reset}
     />
   );
 }
