@@ -7,12 +7,7 @@ import type {
   TaskPriority,
   TaskStatus,
 } from "@/lib/supabase/database.types";
-import {
-  TASK_PRIORITIES,
-  TASK_PRIORITY_LABELS,
-  TASK_STATUSES,
-  TASK_STATUS_LABELS,
-} from "@/lib/tasks/constants";
+import { TASK_STATUSES } from "@/lib/tasks/constants";
 import {
   isTaskDueSoon,
   isTaskOverdue,
@@ -23,18 +18,11 @@ import type { ShareActionState } from "@/lib/validation/share";
 import { Modal } from "./modal";
 import { ShareControls } from "./share-controls";
 import { TaskColumn } from "./task-column";
+import { TaskFilters, type QuickFilter } from "./task-filters";
 import { TaskForm } from "./task-form";
 import { TaskRealtime } from "./task-realtime";
 
-type QuickFilter = "all" | "completed" | "due_soon" | "overdue";
-type DashboardDialog = "filters" | "new-task" | "sharing";
-
-const quickFilters: { label: string; value: QuickFilter }[] = [
-  { label: "All", value: "all" },
-  { label: "Overdue", value: "overdue" },
-  { label: "Due soon", value: "due_soon" },
-  { label: "Completed", value: "completed" },
-];
+type DashboardDialog = "new-task" | "sharing";
 
 type TaskDashboardProps = {
   initialShare: ShareActionState;
@@ -49,10 +37,8 @@ export function TaskDashboard({
 }: TaskDashboardProps) {
   const [activeDialog, setActiveDialog] = useState<DashboardDialog>();
   const [taskFormVersion, setTaskFormVersion] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
-  const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">(
-    "all",
-  );
+  const [statusFilters, setStatusFilters] = useState<TaskStatus[]>([]);
+  const [priorityFilters, setPriorityFilters] = useState<TaskPriority[]>([]);
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const today = useLocalDate();
 
@@ -60,12 +46,12 @@ export function TaskDashboard({
     () =>
       tasks.filter((task) => {
         const matchesStatus =
-          statusFilter === "all" || task.status === statusFilter;
+          statusFilters.length === 0 || statusFilters.includes(task.status);
         const matchesPriority =
-          priorityFilter === "all" || task.priority === priorityFilter;
+          priorityFilters.length === 0 ||
+          priorityFilters.includes(task.priority);
         const matchesQuickFilter =
           quickFilter === "all" ||
-          (quickFilter === "completed" && task.status === "done") ||
           (quickFilter === "overdue" &&
             isTaskOverdue(task.due_date, task.status, today)) ||
           (quickFilter === "due_soon" &&
@@ -73,7 +59,7 @@ export function TaskDashboard({
 
         return matchesStatus && matchesPriority && matchesQuickFilter;
       }),
-    [priorityFilter, quickFilter, statusFilter, tasks, today],
+    [priorityFilters, quickFilter, statusFilters, tasks, today],
   );
 
   const tasksByStatus = useMemo(
@@ -86,15 +72,16 @@ export function TaskDashboard({
       ) as Record<TaskStatus, Task[]>,
     [filteredTasks],
   );
-  const filtersActive =
-    statusFilter !== "all" ||
-    priorityFilter !== "all" ||
-    quickFilter !== "all";
-  const activeFilterCount =
-    Number(statusFilter !== "all") +
-    Number(priorityFilter !== "all") +
-    Number(quickFilter !== "all");
-
+  const visibleStatuses =
+    statusFilters.length > 0
+      ? TASK_STATUSES.filter((status) => statusFilters.includes(status))
+      : TASK_STATUSES;
+  const boardGridClasses =
+    visibleStatuses.length === 2
+      ? "md:grid-cols-2"
+      : visibleStatuses.length === 3
+        ? "md:grid-cols-3"
+        : "";
   const closeDialog = useCallback(() => setActiveDialog(undefined), []);
   const handleTaskCreated = useCallback(() => {
     setActiveDialog(undefined);
@@ -102,8 +89,8 @@ export function TaskDashboard({
   }, []);
 
   function resetFilters() {
-    setStatusFilter("all");
-    setPriorityFilter("all");
+    setStatusFilters([]);
+    setPriorityFilters([]);
     setQuickFilter("all");
   }
 
@@ -149,20 +136,17 @@ export function TaskDashboard({
         >
           Sharing
         </button>
-        <button
-          aria-expanded={activeDialog === "filters"}
-          aria-haspopup="dialog"
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
-          onClick={() => setActiveDialog("filters")}
-          type="button"
-        >
-          Filters
-          {activeFilterCount > 0 ? (
-            <span className="inline-flex min-w-5 justify-center rounded-full bg-emerald-700 px-1.5 py-0.5 text-xs text-white">
-              {activeFilterCount}
-            </span>
-          ) : null}
-        </button>
+        <TaskFilters
+          filteredCount={filteredTasks.length}
+          onPrioritiesChange={setPriorityFilters}
+          onQuickChange={setQuickFilter}
+          onReset={resetFilters}
+          onStatusesChange={setStatusFilters}
+          priorities={priorityFilters}
+          quick={quickFilter}
+          statuses={statusFilters}
+          totalCount={tasks.length}
+        />
       </div>
 
       <Modal
@@ -181,107 +165,6 @@ export function TaskDashboard({
         <ShareControls initialShare={initialShare} />
       </Modal>
 
-      <Modal
-        onClose={closeDialog}
-        open={activeDialog === "filters"}
-        title="Filters"
-      >
-        <div
-          aria-label="Quick filters"
-          className="flex flex-wrap gap-2"
-          role="group"
-        >
-          {quickFilters.map((filter) => (
-            <button
-              aria-pressed={quickFilter === filter.value}
-              className="rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 aria-pressed:border-emerald-700 aria-pressed:bg-emerald-700 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-              key={filter.value}
-              onClick={() => setQuickFilter(filter.value)}
-              type="button"
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
-              htmlFor="status-filter"
-            >
-              Status
-            </label>
-            <select
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
-              id="status-filter"
-              onChange={(event) =>
-                setStatusFilter(event.target.value as TaskStatus | "all")
-              }
-              value={statusFilter}
-            >
-              <option value="all">All statuses</option>
-              {TASK_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {TASK_STATUS_LABELS[status]}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
-              htmlFor="priority-filter"
-            >
-              Priority
-            </label>
-            <select
-              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
-              id="priority-filter"
-              onChange={(event) =>
-                setPriorityFilter(event.target.value as TaskPriority | "all")
-              }
-              value={priorityFilter}
-            >
-              <option value="all">All priorities</option>
-              {TASK_PRIORITIES.map((priority) => (
-                <option key={priority} value={priority}>
-                  {TASK_PRIORITY_LABELS[priority]}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <p
-          aria-atomic="true"
-          aria-live="polite"
-          className="mt-5 text-sm font-medium text-slate-500"
-        >
-          {filteredTasks.length} of {tasks.length}{" "}
-          {tasks.length === 1 ? "task" : "tasks"}
-        </p>
-
-        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4">
-          <button
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:text-slate-400 disabled:hover:bg-transparent"
-            disabled={!filtersActive}
-            onClick={resetFilters}
-            type="button"
-          >
-            Reset
-          </button>
-          <button
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            onClick={closeDialog}
-            type="button"
-          >
-            Done
-          </button>
-        </div>
-      </Modal>
-
       {tasks.length > 0 && filteredTasks.length === 0 ? (
         <section className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
           <p className="font-semibold text-slate-900">No matches</p>
@@ -295,8 +178,8 @@ export function TaskDashboard({
         </section>
       ) : (
         <section aria-label="Task board" className="mt-7">
-          <div className="grid items-start gap-4 md:grid-cols-3">
-            {TASK_STATUSES.map((status) => (
+          <div className={`grid items-start gap-4 ${boardGridClasses}`}>
+            {visibleStatuses.map((status) => (
               <TaskColumn
                 key={status}
                 status={status}
