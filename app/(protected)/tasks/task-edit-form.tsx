@@ -66,7 +66,7 @@ export function TaskEditForm({
           aria-describedby={titleError ? `${titleId}-error` : undefined}
           aria-invalid={Boolean(titleError)}
           autoFocus
-          className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+          className="clearlooks-input h-11 w-full border px-3.5 text-sm outline-none transition aria-invalid:border-red-500"
           defaultValue={task.title}
           disabled={pending}
           id={titleId}
@@ -96,7 +96,7 @@ export function TaskEditForm({
             descriptionError ? `${descriptionId}-error` : undefined
           }
           aria-invalid={Boolean(descriptionError)}
-          className="min-h-32 w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+          className="clearlooks-input min-h-32 w-full resize-y border px-3.5 py-3 text-sm outline-none transition aria-invalid:border-red-500"
           defaultValue={task.description ?? ""}
           disabled={pending}
           id={descriptionId}
@@ -124,7 +124,7 @@ export function TaskEditForm({
           <select
             aria-describedby={priorityError ? `${priorityId}-error` : undefined}
             aria-invalid={Boolean(priorityError)}
-            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+            className="clearlooks-input h-11 w-full border px-3 text-sm outline-none transition aria-invalid:border-red-500"
             defaultValue={task.priority}
             disabled={pending}
             id={priorityId}
@@ -156,7 +156,7 @@ export function TaskEditForm({
           <select
             aria-describedby={statusError ? `${statusId}-error` : undefined}
             aria-invalid={Boolean(statusError)}
-            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+            className="clearlooks-input h-11 w-full border px-3 text-sm outline-none transition aria-invalid:border-red-500"
             defaultValue={task.status}
             disabled={pending}
             id={statusId}
@@ -189,7 +189,7 @@ export function TaskEditForm({
         <input
           aria-describedby={dueDateError ? `${dueDateId}-error` : undefined}
           aria-invalid={Boolean(dueDateError)}
-          className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+          className="clearlooks-input h-11 w-full border px-3 text-sm outline-none transition aria-invalid:border-red-500"
           defaultValue={task.due_date ?? ""}
           disabled={pending}
           id={dueDateId}
@@ -214,7 +214,7 @@ export function TaskEditForm({
 
       <div className="flex justify-end gap-2 border-t border-slate-200 pt-4">
         <button
-          className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="clearlooks-button px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={pending}
           onClick={onCancel}
           type="button"
@@ -222,7 +222,7 @@ export function TaskEditForm({
           Cancel
         </button>
         <button
-          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="clearlooks-button-primary px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={pending}
           type="submit"
         >

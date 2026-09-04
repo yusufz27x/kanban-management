@@ -126,7 +126,7 @@ export function TaskDashboard({
         <button
           aria-expanded={activeDialog === "new-task"}
           aria-haspopup="dialog"
-          className="rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          className="clearlooks-button-primary px-4 py-2.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
           onClick={() => setActiveDialog("new-task")}
           type="button"
         >
@@ -135,7 +135,7 @@ export function TaskDashboard({
         <button
           aria-expanded={activeDialog === "sharing"}
           aria-haspopup="dialog"
-          className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
+          className="clearlooks-button px-4 py-2.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
           onClick={() => setActiveDialog("sharing")}
           type="button"
         >
@@ -171,10 +171,10 @@ export function TaskDashboard({
       </Modal>
 
       {tasks.length > 0 && filteredTasks.length === 0 ? (
-        <section className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+        <section className="clearlooks-panel mt-7 border border-dashed px-6 py-12 text-center">
           <p className="font-semibold text-slate-900">No matches</p>
           <button
-            className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className="clearlooks-button-primary mt-5 px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
             onClick={resetFilters}
             type="button"
           >

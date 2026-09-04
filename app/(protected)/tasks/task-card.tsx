@@ -76,13 +76,13 @@ export function TaskCard({ task, today }: TaskCardProps) {
     <>
       <article
         aria-labelledby={titleId}
-        className={`overflow-hidden rounded-xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+        className={`clearlooks-card overflow-hidden border transition hover:-translate-y-0.5 ${
           overdue ? "border-red-300" : "border-slate-200"
         }`}
       >
         <button
           aria-haspopup="dialog"
-          className="block w-full p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-emerald-700 sm:p-3.5"
+          className="block w-full p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#3465a4] sm:p-3.5"
           onClick={() => setOpen(true)}
           type="button"
         >
@@ -202,7 +202,7 @@ export function TaskCard({ task, today }: TaskCardProps) {
                 </p>
                 <div className="mt-3 flex gap-2">
                   <button
-                    className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
+                    className="clearlooks-button px-3 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
                     disabled={deletePending}
                     onClick={() => setConfirmingDelete(false)}
                     ref={cancelDeleteRef}
@@ -213,7 +213,7 @@ export function TaskCard({ task, today }: TaskCardProps) {
                   <form action={deleteAction} aria-busy={deletePending}>
                     <input name="taskId" type="hidden" value={task.id} />
                     <button
-                      className="rounded-lg bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="clearlooks-button-danger px-3 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                       disabled={deletePending}
                       type="submit"
                     >
@@ -225,14 +225,14 @@ export function TaskCard({ task, today }: TaskCardProps) {
             ) : (
               <div className="mt-5 flex items-center justify-between gap-3">
                 <button
-                  className="rounded-lg px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+                  className="clearlooks-button-danger px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
                   onClick={() => setConfirmingDelete(true)}
                   type="button"
                 >
                   Delete
                 </button>
                 <button
-                  className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                  className="clearlooks-button-primary px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
                   onClick={() => setEditing(true)}
                   type="button"
                 >

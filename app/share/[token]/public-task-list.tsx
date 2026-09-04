@@ -97,7 +97,7 @@ export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
 
   if (tasks.length === 0) {
     return (
-      <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
+      <section className="clearlooks-panel border border-dashed px-6 py-14 text-center">
         <p className="text-lg font-semibold text-slate-900">No tasks</p>
       </section>
     );
@@ -124,10 +124,10 @@ export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
       </div>
 
       {filteredTasks.length === 0 ? (
-        <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+        <section className="clearlooks-panel border border-dashed px-6 py-12 text-center">
           <p className="font-semibold text-slate-900">No matches</p>
           <button
-            className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className="clearlooks-button-primary mt-5 px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
             onClick={resetFilters}
             type="button"
           >
@@ -166,7 +166,7 @@ function PublicTaskColumn({
   return (
     <section
       aria-labelledby={headingId}
-      className="min-w-0 rounded-2xl border border-slate-200 bg-slate-100/80 p-3 sm:p-4"
+      className="clearlooks-column min-w-0 border p-3 sm:p-4"
     >
       <header className="flex items-center justify-between gap-3 px-1">
         <div className="flex min-w-0 items-center gap-2">
@@ -183,7 +183,7 @@ function PublicTaskColumn({
         </div>
         <span
           aria-label={`${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`}
-          className="inline-flex min-w-7 justify-center rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-600 shadow-sm"
+          className="clearlooks-card inline-flex min-w-7 justify-center border px-2 py-1 text-xs font-semibold text-slate-600"
         >
           {tasks.length}
         </span>
@@ -195,7 +195,7 @@ function PublicTaskColumn({
             <PublicTaskCard key={task.id} task={task} today={today} />
           ))
         ) : (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-8 text-center">
+          <div className="clearlooks-card border border-dashed px-4 py-8 text-center">
             <p className="text-sm font-medium text-slate-500">No tasks</p>
           </div>
         )}
@@ -221,13 +221,13 @@ function PublicTaskCard({
     <>
       <article
         aria-labelledby={titleId}
-        className={`overflow-hidden rounded-xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+        className={`clearlooks-card overflow-hidden border transition hover:-translate-y-0.5 ${
           overdue ? "border-red-300" : "border-slate-200"
         }`}
       >
         <button
           aria-haspopup="dialog"
-          className="block w-full p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-emerald-700 sm:p-3.5"
+          className="block w-full p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#3465a4] sm:p-3.5"
           onClick={() => setOpen(true)}
           type="button"
         >

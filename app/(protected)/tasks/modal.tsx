@@ -31,7 +31,7 @@ export function Modal({ children, onClose, open, title }: ModalProps) {
   return (
     <dialog
       aria-labelledby={titleId}
-      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-2xl bg-white p-0 text-slate-950 shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm"
+      className="clearlooks-dialog m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-xl overflow-hidden p-0 text-slate-950 backdrop:bg-slate-950/45 backdrop:backdrop-blur-[1px]"
       onCancel={onClose}
       onClick={(event) => {
         if (event.target === event.currentTarget) {
@@ -46,13 +46,13 @@ export function Modal({ children, onClose, open, title }: ModalProps) {
       ref={dialogRef}
     >
       <div className="flex max-h-[calc(100dvh-2rem)] flex-col">
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 px-5 py-4 sm:px-6">
+        <header className="clearlooks-bar flex shrink-0 items-center justify-between gap-4 border-b px-5 py-3.5 sm:px-6">
           <h2 className="text-lg font-semibold text-slate-950" id={titleId}>
             {title}
           </h2>
           <button
             aria-label={`Close ${title}`}
-            className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
+            className="clearlooks-button px-3 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
             onClick={onClose}
             type="button"
           >

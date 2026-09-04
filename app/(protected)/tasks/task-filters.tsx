@@ -110,10 +110,10 @@ export function TaskFilters({
         <button
           aria-controls={panelId}
           aria-expanded={open}
-          className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 ${
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 ${
             activeFilters.length > 0
-              ? "border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
-              : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"
+              ? "clearlooks-button-primary"
+              : "clearlooks-button"
           }`}
           onClick={() => setOpen((current) => !current)}
           ref={triggerRef}
@@ -121,7 +121,7 @@ export function TaskFilters({
         >
           Filters
           {activeFilters.length > 0 ? (
-            <span className="inline-flex min-w-5 justify-center rounded-full bg-emerald-700 px-1.5 py-0.5 text-xs text-white">
+            <span className="inline-flex min-w-5 justify-center rounded-full bg-white/25 px-1.5 py-0.5 text-xs text-white">
               {activeFilters.length}
             </span>
           ) : null}
@@ -130,7 +130,7 @@ export function TaskFilters({
         {open ? (
           <section
             aria-label="Filters"
-            className="absolute left-0 z-30 mt-2 w-[calc(100vw-2.5rem)] max-w-96 rounded-xl border border-slate-200 bg-white p-4 shadow-xl"
+            className="clearlooks-popover absolute left-0 z-30 mt-2 w-[calc(100vw-2.5rem)] max-w-96 border p-4"
             id={panelId}
           >
             <div>
@@ -141,7 +141,7 @@ export function TaskFilters({
                 {quickFilters.map((filter) => (
                   <button
                     aria-pressed={quick === filter.value}
-                    className="rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 aria-pressed:border-emerald-700 aria-pressed:bg-emerald-700 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    className="clearlooks-toggle border px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2"
                     key={filter.value}
                     onClick={() => onQuickChange(filter.value)}
                     type="button"
@@ -171,7 +171,7 @@ export function TaskFilters({
                     return (
                       <button
                         aria-pressed={selected}
-                        className="rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 aria-pressed:border-emerald-700 aria-pressed:bg-emerald-700 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        className="clearlooks-toggle border px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2"
                         key={status}
                         onClick={() =>
                           onStatusesChange(
@@ -207,7 +207,7 @@ export function TaskFilters({
                     return (
                       <button
                         aria-pressed={selected}
-                        className="rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 aria-pressed:border-emerald-700 aria-pressed:bg-emerald-700 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        className="clearlooks-toggle border px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2"
                         key={priority}
                         onClick={() =>
                           onPrioritiesChange(
@@ -237,7 +237,7 @@ export function TaskFilters({
               </p>
               <div className="flex items-center gap-2">
                 <button
-                  className="rounded-lg px-3 py-1.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:text-slate-400 disabled:hover:bg-transparent"
+                  className="clearlooks-button px-3 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:text-slate-400"
                   disabled={activeFilters.length === 0}
                   onClick={onReset}
                   type="button"
@@ -245,7 +245,7 @@ export function TaskFilters({
                   Reset
                 </button>
                 <button
-                  className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+                  className="clearlooks-button-primary px-3 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
                   onClick={() => setOpen(false)}
                   type="button"
                 >
@@ -260,7 +260,7 @@ export function TaskFilters({
       {activeFilters.map((filter) => (
         <button
           aria-label={`Clear ${filter.label} filter`}
-          className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          className="clearlooks-chip inline-flex items-center gap-1.5 border px-3 py-1.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
           key={filter.key}
           onClick={filter.onClear}
           type="button"

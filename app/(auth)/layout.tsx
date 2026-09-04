@@ -13,7 +13,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
 
   return (
     <main
-      className="flex min-h-screen flex-1 items-center justify-center bg-white px-6 py-12 sm:px-10"
+      className="clearlooks-app flex min-h-screen flex-1 items-center justify-center px-6 py-12 sm:px-10"
       id="main-content"
     >
       {children}

@@ -51,7 +51,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
             aria-describedby={titleError ? "task-title-error" : undefined}
             aria-invalid={Boolean(titleError)}
             autoFocus
-            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+            className="clearlooks-input h-11 w-full border px-3.5 text-sm outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500"
             disabled={pending}
             id="task-title"
             maxLength={TASK_TITLE_MAX_LENGTH}
@@ -81,7 +81,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
               descriptionError ? "task-description-error" : undefined
             }
             aria-invalid={Boolean(descriptionError)}
-            className="min-h-28 w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+            className="clearlooks-input min-h-28 w-full resize-y border px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500"
             disabled={pending}
             id="task-description"
             maxLength={TASK_DESCRIPTION_MAX_LENGTH}
@@ -111,7 +111,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
                 priorityError ? "task-priority-error" : undefined
               }
               aria-invalid={Boolean(priorityError)}
-              className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+              className="clearlooks-input h-11 w-full border px-3 text-sm outline-none transition aria-invalid:border-red-500"
               defaultValue="medium"
               disabled={pending}
               id="task-priority"
@@ -148,7 +148,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
                 dueDateError ? "task-due-date-error" : undefined
               }
               aria-invalid={Boolean(dueDateError)}
-              className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+              className="clearlooks-input h-11 w-full border px-3 text-sm outline-none transition aria-invalid:border-red-500"
               disabled={pending}
               id="task-due-date"
               name="dueDate"
@@ -180,7 +180,7 @@ export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
         ) : null}
 
         <button
-          className="flex h-11 w-full items-center justify-center rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="clearlooks-button-primary flex h-11 w-full items-center justify-center px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={pending}
           type="submit"
         >

@@ -26,7 +26,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
   const passwordError = state.fieldErrors?.password?.[0];
 
   return (
-    <div className="w-full max-w-md">
+    <div className="clearlooks-panel w-full max-w-md border p-7 sm:p-8">
       <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
         {isLogin ? "Sign in" : "Create account"}
       </h1>
@@ -47,7 +47,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
             aria-describedby={emailError ? "email-error" : undefined}
             aria-invalid={Boolean(emailError)}
             autoComplete="email"
-            className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500 aria-invalid:ring-red-100"
+            className="clearlooks-input h-12 w-full border px-4 outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500 aria-invalid:ring-red-100"
             disabled={pending}
             id="email"
             maxLength={254}
@@ -80,7 +80,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
             }
             aria-invalid={Boolean(passwordError)}
             autoComplete={isLogin ? "current-password" : "new-password"}
-            className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500 aria-invalid:ring-red-100"
+            className="clearlooks-input h-12 w-full border px-4 outline-none transition placeholder:text-slate-400 aria-invalid:border-red-500 aria-invalid:ring-red-100"
             disabled={pending}
             id="password"
             maxLength={72}
@@ -116,7 +116,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
         ) : null}
 
         <button
-          className="flex h-12 w-full items-center justify-center rounded-xl bg-emerald-700 px-5 font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="clearlooks-button-primary flex h-12 w-full items-center justify-center px-5 font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={pending}
           type="submit"
         >
@@ -133,7 +133,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
       <p className="mt-8 text-center text-sm text-slate-600">
         {isLogin ? "No account?" : "Have an account?"}{" "}
         <Link
-          className="font-semibold text-emerald-700 underline-offset-4 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          className="font-semibold text-[#3465a4] underline-offset-4 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3465a4]"
           href={isLogin ? "/signup" : "/login"}
         >
           {isLogin ? "Create one" : "Sign in"}

@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f7f4;
-  --foreground: #17211b;
+  --background: #e8ebed;
+  --foreground: #2e3436;
+  --clearlooks-blue: #4a90d9;
+  --clearlooks-blue-dark: #3465a4;
+  --clearlooks-border: #9ba4ac;
 }
 
 @theme inline {
@@ -13,7 +16,9 @@
 }
 
 body {
-  background: var(--background);
+  background:
+    linear-gradient(rgb(255 255 255 / 45%), transparent 11rem),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
@@ -26,6 +31,175 @@ textarea {
 }
 
 ::selection {
-  background: #bbf7d0;
-  color: #14532d;
+  background: #729fcf;
+  color: #ffffff;
+}
+
+.clearlooks-app {
+  background:
+    linear-gradient(rgb(255 255 255 / 38%), transparent 12rem),
+    #e8ebed;
+}
+
+.clearlooks-app h1,
+.clearlooks-dialog h2 {
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.clearlooks-bar {
+  border-color: #a5adb4;
+  background: linear-gradient(#fafbfc, #dfe3e6);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgb(46 52 54 / 12%);
+}
+
+.clearlooks-panel {
+  border-color: var(--clearlooks-border);
+  border-radius: 8px;
+  background: linear-gradient(#f8f9fa, #e6e9eb);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgb(46 52 54 / 14%);
+}
+
+.clearlooks-column {
+  border-color: #aab2b9;
+  border-radius: 8px;
+  background: linear-gradient(#eef1f3, #dfe3e6);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgb(46 52 54 / 12%);
+}
+
+.clearlooks-card {
+  border-color: #aeb6bd;
+  border-radius: 6px;
+  background: linear-gradient(#ffffff, #f5f6f7);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgb(46 52 54 / 16%);
+}
+
+.clearlooks-card:hover {
+  border-color: #7896b4;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 2px 4px rgb(46 52 54 / 20%);
+}
+
+.clearlooks-card > button:focus-visible {
+  outline-color: var(--clearlooks-blue-dark);
+}
+
+.clearlooks-dialog {
+  border: 1px solid #858e96;
+  border-radius: 8px;
+  background: #f4f5f6;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 14px 35px rgb(30 38 44 / 32%);
+}
+
+.clearlooks-popover {
+  border-color: #8f99a1;
+  border-radius: 7px;
+  background: linear-gradient(#fafbfc, #eceff1);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 5px 14px rgb(46 52 54 / 24%);
+}
+
+.clearlooks-button {
+  border: 1px solid #8f989f;
+  border-radius: 5px;
+  background: linear-gradient(#ffffff, #dfe3e6);
+  color: #2e3436;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 1px rgb(46 52 54 / 16%);
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.clearlooks-button:hover:not(:disabled) {
+  border-color: #6f8498;
+  background: linear-gradient(#ffffff, #d4e1ed);
+}
+
+.clearlooks-button:active:not(:disabled) {
+  background: linear-gradient(#d5dadd, #f5f6f7);
+  box-shadow: inset 0 1px 2px rgb(46 52 54 / 22%);
+}
+
+.clearlooks-button-primary {
+  border-color: #285784;
+  background: linear-gradient(#75afe3, var(--clearlooks-blue-dark));
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 42%),
+    0 1px 1px rgb(46 52 54 / 20%);
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 32%);
+}
+
+.clearlooks-button-primary:hover:not(:disabled) {
+  border-color: #204d78;
+  background: linear-gradient(#85b9e8, #3d75ad);
+}
+
+.clearlooks-button-danger {
+  border-color: #b97878;
+  background: linear-gradient(#fffafa, #ead6d6);
+  color: #9d2929;
+}
+
+.clearlooks-button-danger:hover:not(:disabled) {
+  border-color: #a85e5e;
+  background: linear-gradient(#ffffff, #e8caca);
+}
+
+.clearlooks-input {
+  border-color: #929ba2;
+  border-radius: 5px;
+  background: linear-gradient(#f2f3f4, #ffffff 0.55rem);
+  color: #2e3436;
+  box-shadow:
+    inset 0 1px 2px rgb(46 52 54 / 18%),
+    0 1px 0 #ffffff;
+}
+
+.clearlooks-input:focus {
+  border-color: var(--clearlooks-blue-dark);
+  box-shadow:
+    inset 0 1px 2px rgb(46 52 54 / 14%),
+    0 0 0 2px rgb(74 144 217 / 26%);
+}
+
+.clearlooks-toggle {
+  border-color: #9ba4ac;
+  border-radius: 5px;
+  background: linear-gradient(#ffffff, #e2e5e7);
+  color: #3c444a;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.clearlooks-toggle[aria-pressed="true"] {
+  border-color: #285784;
+  background: linear-gradient(#75afe3, var(--clearlooks-blue-dark));
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 28%);
+}
+
+.clearlooks-chip {
+  border-color: #89a8c5;
+  border-radius: 5px;
+  background: linear-gradient(#f8fbff, #dce9f5);
+  color: #285784;
+}
+
+.clearlooks-button:focus-visible,
+.clearlooks-button-primary:focus-visible,
+.clearlooks-button-danger:focus-visible,
+.clearlooks-toggle:focus-visible,
+.clearlooks-chip:focus-visible {
+  outline-color: var(--clearlooks-blue-dark);
 }

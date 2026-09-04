@@ -55,8 +55,8 @@ export default async function SharedTasksPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f7f4]">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="clearlooks-app min-h-screen">
+      <header className="clearlooks-bar border-b">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <h1 className="font-semibold text-slate-950">Shared tasks</h1>
           <span className="inline-flex shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">

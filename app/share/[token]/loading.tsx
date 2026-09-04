@@ -12,7 +12,7 @@ export default function SharedTasksLoading() {
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {[0, 1, 2].map((item) => (
           <div
-            className="h-48 rounded-2xl border border-slate-200 bg-white"
+            className="clearlooks-column h-64 border"
             key={item}
           />
         ))}

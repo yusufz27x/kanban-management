@@ -8,13 +8,13 @@ export default function TasksLoading() {
     >
       <div className="h-4 w-36 rounded bg-slate-200" />
       <div className="mt-4 h-10 w-64 rounded bg-slate-200" />
-      <div className="mt-8 grid gap-7 lg:grid-cols-[minmax(280px,360px)_1fr]">
-        <div className="h-[34rem] rounded-2xl bg-slate-200" />
-        <div className="space-y-4">
-          <div className="h-24 rounded-2xl bg-slate-200" />
-          <div className="h-44 rounded-2xl bg-slate-200" />
-          <div className="h-56 rounded-2xl bg-slate-200" />
-        </div>
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
+        {[0, 1, 2].map((item) => (
+          <div
+            className="clearlooks-column h-64 border"
+            key={item}
+          />
+        ))}
       </div>
       <span className="sr-only">Loading your tasks…</span>
     </main>

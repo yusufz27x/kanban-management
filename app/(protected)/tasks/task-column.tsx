@@ -21,7 +21,7 @@ export function TaskColumn({ status, tasks, today }: TaskColumnProps) {
   return (
     <section
       aria-labelledby={headingId}
-      className="min-w-0 rounded-2xl border border-slate-200 bg-slate-100/80 p-3 sm:p-4"
+      className="clearlooks-column min-w-0 border p-3 sm:p-4"
     >
       <header className="flex items-center justify-between gap-3 px-1">
         <div className="flex min-w-0 items-center gap-2">
@@ -38,7 +38,7 @@ export function TaskColumn({ status, tasks, today }: TaskColumnProps) {
         </div>
         <span
           aria-label={`${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`}
-          className="inline-flex min-w-7 justify-center rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-600 shadow-sm"
+          className="clearlooks-card inline-flex min-w-7 justify-center border px-2 py-1 text-xs font-semibold text-slate-600"
         >
           {tasks.length}
         </span>
@@ -54,7 +54,7 @@ export function TaskColumn({ status, tasks, today }: TaskColumnProps) {
             />
           ))
         ) : (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-8 text-center">
+          <div className="clearlooks-card border border-dashed px-4 py-8 text-center">
             <p className="text-sm font-medium text-slate-500">No tasks</p>
           </div>
         )}

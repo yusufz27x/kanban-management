@@ -18,15 +18,15 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f7f4]">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="clearlooks-app min-h-screen">
+      <header className="clearlooks-bar border-b">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <p className="min-w-0 truncate text-sm text-slate-600">
             {data.claims.email ?? "Signed in"}
           </p>
           <form action="/auth/logout" method="post">
             <button
-              className="shrink-0 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+              className="clearlooks-button shrink-0 px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
               type="submit"
             >
               Log out

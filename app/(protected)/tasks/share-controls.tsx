@@ -44,7 +44,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
         <span
           className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${
             state.enabled
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              ? "border-blue-200 bg-blue-50 text-blue-700"
               : "border-slate-200 bg-slate-50 text-slate-600"
           }`}
         >
@@ -62,14 +62,14 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
-              className="h-10 min-w-0 flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-700 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+              className="clearlooks-input h-10 min-w-0 flex-1 border px-3 text-sm outline-none"
               id="share-url"
               onFocus={(event) => event.currentTarget.select()}
               readOnly
               value={sharePath}
             />
             <button
-              className="h-10 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="clearlooks-button h-10 px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               disabled={!state.enabled}
               onClick={copyShareUrl}
               type="button"
@@ -91,10 +91,10 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
         onSubmit={() => setCopyMessage(undefined)}
       >
         <button
-          className={`rounded-lg border px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+          className={`px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
             state.enabled
-              ? "border-red-300 bg-white text-red-700 hover:border-red-400 hover:bg-red-50 focus-visible:outline-red-700"
-              : "border-emerald-700 bg-emerald-700 text-white hover:border-emerald-800 hover:bg-emerald-800 focus-visible:outline-emerald-700"
+              ? "clearlooks-button-danger"
+              : "clearlooks-button-primary"
           }`}
           disabled={pending}
           name="operation"
@@ -105,7 +105,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
         </button>
         {state.token ? (
           <button
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-slate-300 disabled:hover:bg-white"
+            className="clearlooks-button px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={pending || !state.enabled}
             name="operation"
             type="submit"
@@ -119,7 +119,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
       <p
         aria-live="polite"
         className={`mt-3 min-h-5 text-sm ${
-          state.status === "error" ? "text-red-700" : "text-emerald-700"
+          state.status === "error" ? "text-red-700" : "text-blue-700"
         }`}
         role={state.status === "error" ? "alert" : "status"}
       >
