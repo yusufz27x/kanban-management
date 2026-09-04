@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Tasks",
-    template: "%s | Tasks",
+    default: "Kanban Task Management",
+    template: "%s | Kanban Task Management",
   },
   description: "Personal task manager.",
 };
