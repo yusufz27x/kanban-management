@@ -14,20 +14,19 @@ import { createTask } from "./actions";
 
 const initialState: TaskActionState = {};
 
-export function TaskForm() {
+export function TaskForm({ onSuccess }: { onSuccess?: () => void }) {
   const [state, formAction, pending] = useActionState(
     createTask,
     initialState,
   );
   const formRef = useRef<HTMLFormElement>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (state.status === "success") {
       formRef.current?.reset();
-      titleRef.current?.focus();
+      onSuccess?.();
     }
-  }, [state]);
+  }, [onSuccess, state]);
 
   const titleError = state.fieldErrors?.title?.[0];
   const descriptionError = state.fieldErrors?.description?.[0];
@@ -35,23 +34,12 @@ export function TaskForm() {
   const dueDateError = state.fieldErrors?.dueDate?.[0];
 
   return (
-    <section
-      aria-labelledby="create-task-heading"
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+    <form
+      action={formAction}
+      aria-busy={pending}
+      className="space-y-5"
+      ref={formRef}
     >
-      <h2
-        className="mb-6 text-xl font-semibold tracking-tight text-slate-950"
-        id="create-task-heading"
-      >
-        New task
-      </h2>
-
-      <form
-        action={formAction}
-        aria-busy={pending}
-        className="space-y-5"
-        ref={formRef}
-      >
         <div>
           <label
             className="mb-2 block text-sm font-medium text-slate-800"
@@ -62,13 +50,13 @@ export function TaskForm() {
           <input
             aria-describedby={titleError ? "task-title-error" : undefined}
             aria-invalid={Boolean(titleError)}
+            autoFocus
             className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
             disabled={pending}
             id="task-title"
             maxLength={TASK_TITLE_MAX_LENGTH}
             name="title"
             placeholder="Prepare project notes"
-            ref={titleRef}
             required
           />
           {titleError ? (
@@ -110,7 +98,7 @@ export function TaskForm() {
           ) : null}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label
               className="mb-2 block text-sm font-medium text-slate-800"
@@ -198,7 +186,6 @@ export function TaskForm() {
         >
           {pending ? "Adding task…" : "Add task"}
         </button>
-      </form>
-    </section>
+    </form>
   );
 }

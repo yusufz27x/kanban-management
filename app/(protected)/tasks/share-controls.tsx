@@ -34,19 +34,10 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
   }
 
   return (
-    <section
-      aria-labelledby="sharing-heading"
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
-    >
+    <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2
-            className="text-lg font-semibold text-slate-950"
-            id="sharing-heading"
-          >
-            Sharing
-          </h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
+          <p className="max-w-2xl text-sm leading-6 text-slate-600">
             Anyone with the link can view. Read-only.
           </p>
         </div>
@@ -141,6 +132,6 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
       >
         {pending ? "Updating sharing…" : copyMessage || state.message}
       </p>
-    </section>
+    </div>
   );
 }
