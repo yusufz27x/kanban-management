@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type DragEvent,
   useActionState,
   useCallback,
   useEffect,
@@ -22,6 +23,7 @@ import {
   isTaskDueSoon,
   isTaskOverdue,
 } from "@/lib/tasks/dates";
+import { TASK_DRAG_TYPE } from "@/lib/tasks/drag";
 
 import { deleteTask } from "./actions";
 import { Modal } from "./modal";
@@ -40,14 +42,16 @@ const statusBadgeClasses: Record<TaskStatus, string> = {
 };
 
 type TaskCardProps = {
+  dragDisabled: boolean;
   task: Task;
   today: string;
 };
 
-export function TaskCard({ task, today }: TaskCardProps) {
+export function TaskCard({ dragDisabled, task, today }: TaskCardProps) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const cancelDeleteRef = useRef<HTMLButtonElement>(null);
   const [deleteState, deleteAction, deletePending] = useActionState(
     deleteTask,
@@ -72,17 +76,33 @@ export function TaskCard({ task, today }: TaskCardProps) {
 
   const dueDate = task.due_date ? formatDateOnly(task.due_date) : "No due date";
 
+  function handleDragStart(event: DragEvent<HTMLElement>) {
+    if (dragDisabled) {
+      event.preventDefault();
+      return;
+    }
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData(TASK_DRAG_TYPE, task.id);
+    setDragging(true);
+  }
+
   return (
     <>
       <article
         aria-labelledby={titleId}
         className={`clearlooks-card overflow-hidden border transition hover:-translate-y-0.5 ${
+          dragging ? "opacity-50" : ""
+        } ${
           overdue ? "border-red-300" : "border-slate-200"
         }`}
+        draggable={!dragDisabled}
+        onDragEnd={() => setDragging(false)}
+        onDragStart={handleDragStart}
       >
         <button
           aria-haspopup="dialog"
-          className="block w-full p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#3465a4] sm:p-3.5"
+          className="block w-full cursor-grab p-3 text-left active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#3465a4] sm:p-3.5"
           onClick={() => setOpen(true)}
           type="button"
         >

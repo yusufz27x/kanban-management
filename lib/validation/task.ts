@@ -48,6 +48,13 @@ export const deleteTaskSchema = z.object({
   taskId: z.uuid("Task could not be found."),
 });
 
+export const moveTaskSchema = z.object({
+  taskId: z.uuid("Task could not be found."),
+  status: z.enum(TASK_STATUSES, {
+    error: "Choose a valid status.",
+  }),
+});
+
 export type TaskActionState = {
   fieldErrors?: {
     description?: string[];

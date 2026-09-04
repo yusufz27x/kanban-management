@@ -48,7 +48,7 @@ export default async function SharedTasksPage({
   const { data: tasks, error: taskError } = await supabase
     .from("tasks")
     .select("id, title, description, priority, status, due_date")
-    .order("due_date", { ascending: true, nullsFirst: false })
+    .order("updated_at", { ascending: false })
     .order("title", { ascending: true });
 
   if (taskError) {

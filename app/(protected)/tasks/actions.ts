@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   createTaskSchema,
   deleteTaskSchema,
+  moveTaskSchema,
   type TaskActionState,
   updateTaskSchema,
 } from "@/lib/validation/task";
@@ -110,6 +111,40 @@ export async function updateTask(
 
   revalidatePath("/tasks");
   return { message: "Task updated.", status: "success" };
+}
+
+export async function moveTask(input: unknown): Promise<TaskActionState> {
+  const { supabase, userId } = await getAuthenticatedContext();
+  const validated = moveTaskSchema.safeParse(input);
+
+  if (!validated.success) {
+    return {
+      message: validated.error.issues[0]?.message ?? "Invalid task move.",
+      status: "error",
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({ status: validated.data.status })
+    .eq("id", validated.data.taskId)
+    .eq("user_id", userId)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !data) {
+    if (error) {
+      console.error("Task move failed", { code: error.code });
+    }
+
+    return {
+      message: "Task could not be moved. Please try again.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/tasks");
+  return { status: "success" };
 }
 
 export async function deleteTask(

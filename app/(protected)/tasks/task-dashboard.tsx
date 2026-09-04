@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import {
+  startTransition,
+  useCallback,
+  useMemo,
+  useOptimistic,
+  useState,
+} from "react";
 
 import { TaskBoardHeader } from "@/components/task-board-header";
 import { TaskRealtime } from "@/components/task-realtime";
@@ -17,6 +23,7 @@ import {
 import { useLocalDate } from "@/lib/tasks/use-local-date";
 import type { ShareActionState } from "@/lib/validation/share";
 
+import { moveTask } from "./actions";
 import { Modal } from "./modal";
 import { ShareControls } from "./share-controls";
 import { TaskColumn } from "./task-column";
@@ -42,11 +49,35 @@ export function TaskDashboard({
   const [statusFilters, setStatusFilters] = useState<TaskStatus[]>([]);
   const [priorityFilters, setPriorityFilters] = useState<TaskPriority[]>([]);
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
+  const [moveError, setMoveError] = useState<string>();
+  const [moving, setMoving] = useState(false);
+  const [optimisticTasks, moveOptimistically] = useOptimistic(
+    tasks,
+    (
+      currentTasks,
+      move: { status: TaskStatus; taskId: string; updatedAt: string },
+    ) => {
+      const movedTask = currentTasks.find((task) => task.id === move.taskId);
+
+      if (!movedTask) {
+        return currentTasks;
+      }
+
+      return [
+        {
+          ...movedTask,
+          status: move.status,
+          updated_at: move.updatedAt,
+        },
+        ...currentTasks.filter((task) => task.id !== move.taskId),
+      ];
+    },
+  );
   const today = useLocalDate();
 
   const filteredTasks = useMemo(
     () =>
-      tasks.filter((task) => {
+      optimisticTasks.filter((task) => {
         const matchesStatus =
           statusFilters.length === 0 || statusFilters.includes(task.status);
         const matchesPriority =
@@ -61,7 +92,7 @@ export function TaskDashboard({
 
         return matchesStatus && matchesPriority && matchesQuickFilter;
       }),
-    [priorityFilters, quickFilter, statusFilters, tasks, today],
+    [optimisticTasks, priorityFilters, quickFilter, statusFilters, today],
   );
 
   const tasksByStatus = useMemo(
@@ -98,6 +129,33 @@ export function TaskDashboard({
     setStatusFilters([]);
     setPriorityFilters([]);
     setQuickFilter("all");
+  }
+
+  function handleMoveTask(taskId: string, status: TaskStatus) {
+    const task = optimisticTasks.find((candidate) => candidate.id === taskId);
+
+    if (!task || task.status === status || moving) {
+      return;
+    }
+
+    setMoveError(undefined);
+    setMoving(true);
+
+    startTransition(async () => {
+      moveOptimistically({
+        status,
+        taskId,
+        updatedAt: new Date().toISOString(),
+      });
+
+      const result = await moveTask({ status, taskId });
+
+      if (result.status === "error") {
+        setMoveError(result.message ?? "Task could not be moved.");
+      }
+
+      setMoving(false);
+    });
   }
 
   return (
@@ -147,6 +205,12 @@ export function TaskDashboard({
         />
       </div>
 
+      {moveError ? (
+        <p className="mb-5 text-sm text-red-700" role="alert">
+          {moveError}
+        </p>
+      ) : null}
+
       <Modal
         onClose={closeDialog}
         open={activeDialog === "new-task"}
@@ -179,7 +243,9 @@ export function TaskDashboard({
           <div className={`grid items-start gap-4 ${boardGridClasses}`}>
             {visibleStatuses.map((status) => (
               <TaskColumn
+                dragDisabled={moving}
                 key={status}
+                onMoveTask={handleMoveTask}
                 status={status}
                 tasks={tasksByStatus[status]}
                 today={today}

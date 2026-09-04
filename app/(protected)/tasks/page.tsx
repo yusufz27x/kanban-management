@@ -36,6 +36,7 @@ export default async function TasksPage() {
       .from("tasks")
       .select("*")
       .eq("user_id", authData.claims.sub)
+      .order("updated_at", { ascending: false })
       .order("created_at", { ascending: false }),
     supabase
       .from("task_shares")
