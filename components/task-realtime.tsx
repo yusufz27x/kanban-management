@@ -31,7 +31,15 @@ function isCleanSocketClose(error: Error) {
   return wasClean === true && (code === 1000 || code === 1001);
 }
 
-export function TaskRealtime({ userId }: { userId: string }) {
+type TaskRealtimeProps = {
+  logLabel?: string;
+  topic: string;
+};
+
+export function TaskRealtime({
+  logLabel = "Task realtime",
+  topic,
+}: TaskRealtimeProps) {
   const router = useRouter();
   const [connectionState, setConnectionState] =
     useState<ConnectionState>("connecting");
@@ -60,10 +68,11 @@ export function TaskRealtime({ userId }: { userId: string }) {
         }
 
         channel = supabase
-          .channel(`tasks:${userId}`, { config: { private: true } })
+          .channel(topic, { config: { private: true } })
           .on("broadcast", { event: "INSERT" }, scheduleRefresh)
           .on("broadcast", { event: "UPDATE" }, scheduleRefresh)
           .on("broadcast", { event: "DELETE" }, scheduleRefresh)
+          .on("broadcast", { event: "changed" }, scheduleRefresh)
           .subscribe((status, error) => {
             if (cancelled) {
               return;
@@ -82,13 +91,13 @@ export function TaskRealtime({ userId }: { userId: string }) {
               setConnectionState("paused");
 
               if (error && !isCleanSocketClose(error)) {
-                console.error("Task realtime subscription failed", error);
+                console.error(`${logLabel} subscription failed`, error);
               }
             }
           });
       } catch (error) {
         if (!cancelled) {
-          console.error("Task realtime authentication failed", error);
+          console.error(`${logLabel} authentication failed`, error);
           setConnectionState("paused");
         }
       }
@@ -104,7 +113,7 @@ export function TaskRealtime({ userId }: { userId: string }) {
         void supabase.removeChannel(channel);
       }
     };
-  }, [router, userId]);
+  }, [logLabel, router, topic]);
 
   return (
     <p

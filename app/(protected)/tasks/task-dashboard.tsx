@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { TaskBoardHeader } from "@/components/task-board-header";
+import { TaskRealtime } from "@/components/task-realtime";
 import type {
   Task,
   TaskPriority,
@@ -21,7 +22,6 @@ import { ShareControls } from "./share-controls";
 import { TaskColumn } from "./task-column";
 import { TaskFilters, type QuickFilter } from "./task-filters";
 import { TaskForm } from "./task-form";
-import { TaskRealtime } from "./task-realtime";
 
 type DashboardDialog = "new-task" | "sharing";
 
@@ -107,7 +107,7 @@ export function TaskDashboard({
     >
       <TaskBoardHeader
         count={tasks.length}
-        status={<TaskRealtime userId={userId} />}
+        status={<TaskRealtime topic={`tasks:${userId}`} />}
         title="Tasks"
       />
 

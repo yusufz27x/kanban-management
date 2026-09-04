@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { TaskBoardHeader } from "@/components/task-board-header";
+import { TaskRealtime } from "@/components/task-realtime";
 import { createPublicShareClient } from "@/lib/supabase/public";
 import { shareTokenSchema } from "@/lib/validation/share";
 
@@ -60,7 +61,16 @@ export default async function SharedTasksPage({
       className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10"
       id="main-content"
     >
-      <TaskBoardHeader count={tasks.length} title="Shared Tasks" />
+      <TaskBoardHeader
+        count={tasks.length}
+        status={
+          <TaskRealtime
+            logLabel="Shared task realtime"
+            topic={`task-share:${parsedToken.data}`}
+          />
+        }
+        title="Shared Tasks"
+      />
       <PublicTaskList tasks={tasks} />
     </main>
   );
