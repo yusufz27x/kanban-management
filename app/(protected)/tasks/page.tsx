@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import {
+  createAuthenticatedDataClient,
+  createClient,
+} from "@/lib/supabase/server";
 
 import { TaskDashboard } from "./task-dashboard";
 
@@ -10,12 +13,23 @@ export const metadata: Metadata = {
 };
 
 export default async function TasksPage() {
-  const supabase = await createClient();
-  const { data: authData } = await supabase.auth.getClaims();
+  const authClient = await createClient();
+  const { data: sessionData, error: sessionError } =
+    await authClient.auth.getSession();
+  const accessToken = sessionData.session?.access_token;
 
-  if (!authData?.claims) {
+  if (sessionError || !accessToken) {
     redirect("/login");
   }
+
+  const { data: authData, error: authError } =
+    await authClient.auth.getClaims(accessToken);
+
+  if (authError || !authData?.claims) {
+    redirect("/login");
+  }
+
+  const supabase = createAuthenticatedDataClient(accessToken);
 
   const [taskResult, shareResult] = await Promise.all([
     supabase
