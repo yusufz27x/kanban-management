@@ -8,7 +8,7 @@ import {
   createTaskSchema,
   deleteTaskSchema,
   type TaskActionState,
-  updateTaskStatusSchema,
+  updateTaskSchema,
 } from "@/lib/validation/task";
 
 async function getAuthenticatedContext() {
@@ -61,26 +61,37 @@ export async function createTask(
   return { message: "Task created.", status: "success" };
 }
 
-export async function updateTaskStatus(
+export async function updateTask(
   _previousState: TaskActionState,
   formData: FormData,
 ): Promise<TaskActionState> {
   const { supabase, userId } = await getAuthenticatedContext();
-  const validated = updateTaskStatusSchema.safeParse({
+  const validated = updateTaskSchema.safeParse({
+    description: formData.get("description"),
+    dueDate: formData.get("dueDate"),
+    priority: formData.get("priority"),
     status: formData.get("status"),
     taskId: formData.get("taskId"),
+    title: formData.get("title"),
   });
 
   if (!validated.success) {
     return {
-      message: validated.error.issues[0]?.message ?? "Invalid task update.",
+      fieldErrors: validated.error.flatten().fieldErrors,
+      message: "Check the highlighted fields and try again.",
       status: "error",
     };
   }
 
   const { data, error } = await supabase
     .from("tasks")
-    .update({ status: validated.data.status })
+    .update({
+      description: validated.data.description,
+      due_date: validated.data.dueDate,
+      priority: validated.data.priority,
+      status: validated.data.status,
+      title: validated.data.title,
+    })
     .eq("id", validated.data.taskId)
     .eq("user_id", userId)
     .select("id")
@@ -88,17 +99,17 @@ export async function updateTaskStatus(
 
   if (error || !data) {
     if (error) {
-      console.error("Task status update failed", { code: error.code });
+      console.error("Task update failed", { code: error.code });
     }
 
     return {
-      message: "Task status could not be updated. Please try again.",
+      message: "Task could not be updated. Please try again.",
       status: "error",
     };
   }
 
   revalidatePath("/tasks");
-  return { message: "Status updated.", status: "success" };
+  return { message: "Task updated.", status: "success" };
 }
 
 export async function deleteTask(

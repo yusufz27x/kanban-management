@@ -37,7 +37,7 @@ export const createTaskSchema = z.object({
     .transform((value) => value || null),
 });
 
-export const updateTaskStatusSchema = z.object({
+export const updateTaskSchema = createTaskSchema.extend({
   taskId: z.uuid("Task could not be found."),
   status: z.enum(TASK_STATUSES, {
     error: "Choose a valid status.",
@@ -53,6 +53,7 @@ export type TaskActionState = {
     description?: string[];
     dueDate?: string[];
     priority?: string[];
+    status?: string[];
     title?: string[];
   };
   message?: string;

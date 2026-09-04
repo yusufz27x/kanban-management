@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import type {
   Task,
@@ -9,7 +15,6 @@ import type {
 } from "@/lib/supabase/database.types";
 import {
   TASK_PRIORITY_LABELS,
-  TASK_STATUSES,
   TASK_STATUS_LABELS,
 } from "@/lib/tasks/constants";
 import {
@@ -18,12 +23,20 @@ import {
   isTaskOverdue,
 } from "@/lib/tasks/dates";
 
-import { deleteTask, updateTaskStatus } from "./actions";
+import { deleteTask } from "./actions";
+import { Modal } from "./modal";
+import { TaskEditForm } from "./task-edit-form";
 
-const badgeClasses: Record<TaskPriority, string> = {
+const priorityBadgeClasses: Record<TaskPriority, string> = {
   low: "border-sky-200 bg-sky-50 text-sky-700",
   medium: "border-amber-200 bg-amber-50 text-amber-800",
   high: "border-red-200 bg-red-50 text-red-700",
+};
+
+const statusBadgeClasses: Record<TaskStatus, string> = {
+  todo: "bg-slate-100 text-slate-700",
+  in_progress: "bg-amber-100 text-amber-800",
+  done: "bg-emerald-100 text-emerald-800",
 };
 
 type TaskCardProps = {
@@ -32,13 +45,10 @@ type TaskCardProps = {
 };
 
 export function TaskCard({ task, today }: TaskCardProps) {
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const cancelDeleteRef = useRef<HTMLButtonElement>(null);
-  const deleteButtonRef = useRef<HTMLButtonElement>(null);
-  const [statusState, statusAction, statusPending] = useActionState(
-    updateTaskStatus,
-    {},
-  );
   const [deleteState, deleteAction, deletePending] = useActionState(
     deleteTask,
     {},
@@ -46,9 +56,13 @@ export function TaskCard({ task, today }: TaskCardProps) {
   const overdue = isTaskOverdue(task.due_date, task.status, today);
   const dueSoon = isTaskDueSoon(task.due_date, task.status, today);
   const titleId = `task-title-${task.id}`;
-  const statusErrorId = `status-error-${task.id}`;
-  const deleteConfirmationId = `delete-confirmation-${task.id}`;
   const deletePromptId = `delete-prompt-${task.id}`;
+
+  const closeTask = useCallback(() => {
+    setOpen(false);
+    setEditing(false);
+    setConfirmingDelete(false);
+  }, []);
 
   useEffect(() => {
     if (confirmingDelete) {
@@ -56,164 +70,185 @@ export function TaskCard({ task, today }: TaskCardProps) {
     }
   }, [confirmingDelete]);
 
-  function cancelDelete() {
-    setConfirmingDelete(false);
-    window.requestAnimationFrame(() => deleteButtonRef.current?.focus());
-  }
+  const dueDate = task.due_date ? formatDateOnly(task.due_date) : "No due date";
 
   return (
-    <article
-      aria-labelledby={titleId}
-      className={`rounded-xl border bg-white p-4 shadow-sm transition ${
-        overdue ? "border-red-300" : "border-slate-200"
-      }`}
-    >
-      <span
-        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${badgeClasses[task.priority]}`}
-      >
-        {TASK_PRIORITY_LABELS[task.priority]} priority
-      </span>
-      <h3
-        className={`mt-3 break-words text-base font-semibold leading-6 text-slate-950 ${
-          task.status === "done" ? "line-through decoration-slate-400" : ""
-        }`}
-        id={titleId}
-      >
-        {task.title}
-      </h3>
-      {task.description ? (
-        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">
-          {task.description}
-        </p>
-      ) : null}
-
-      <div
-        className={`mt-3 rounded-lg px-2.5 py-2 text-xs font-medium ${
-          overdue
-            ? "bg-red-50 text-red-700"
-            : dueSoon
-              ? "bg-amber-50 text-amber-800"
-              : "bg-slate-50 text-slate-600"
+    <>
+      <article
+        aria-labelledby={titleId}
+        className={`overflow-hidden rounded-xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+          overdue ? "border-red-300" : "border-slate-200"
         }`}
       >
-        {task.due_date ? (
-          <>
-            {overdue ? "Overdue · " : dueSoon ? "Due soon · " : "Due "}
-            <time dateTime={task.due_date}>
-              {formatDateOnly(task.due_date)}
-            </time>
-          </>
-        ) : (
-          "No due date"
-        )}
-      </div>
-
-      <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
-        <form action={statusAction} aria-busy={statusPending}>
-          <input name="taskId" type="hidden" value={task.id} />
-          <label
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
-            htmlFor={`status-${task.id}`}
-          >
-            Status
-          </label>
-          <div className="flex gap-2">
-            <select
-              aria-describedby={
-                statusState.status === "error" ? statusErrorId : undefined
-              }
-              aria-invalid={statusState.status === "error"}
-              className="h-10 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 text-sm text-slate-800 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
-              defaultValue={task.status}
-              disabled={statusPending}
-              id={`status-${task.id}`}
-              name="status"
-            >
-              {TASK_STATUSES.map((status: TaskStatus) => (
-                <option key={status} value={status}>
-                  {TASK_STATUS_LABELS[status]}
-                </option>
-              ))}
-            </select>
-            <button
-              className="h-10 shrink-0 rounded-lg bg-slate-900 px-3 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={statusPending}
-              type="submit"
-            >
-              {statusPending ? "Saving…" : "Save"}
-            </button>
-          </div>
-        </form>
-
-        {confirmingDelete ? (
-          <div
-            aria-labelledby={deletePromptId}
-            className="rounded-xl border border-red-200 bg-red-50 p-3"
-            id={deleteConfirmationId}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") {
-                cancelDelete();
-              }
-            }}
-            role="group"
-          >
-            <p
-              className="break-words text-sm font-medium text-red-800"
-              id={deletePromptId}
-            >
-              Permanently delete “{task.title}”?
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <button
-                className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
-                disabled={deletePending}
-                onClick={cancelDelete}
-                ref={cancelDeleteRef}
-                type="button"
-              >
-                Cancel
-              </button>
-              <form action={deleteAction} aria-busy={deletePending}>
-                <input name="taskId" type="hidden" value={task.id} />
-                <button
-                  aria-label={`Permanently delete ${task.title}`}
-                  className="rounded-lg bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-                  disabled={deletePending}
-                  type="submit"
-                >
-                  {deletePending ? "Deleting…" : "Delete task"}
-                </button>
-              </form>
-            </div>
-          </div>
-        ) : (
-          <button
-            aria-controls={deleteConfirmationId}
-            aria-label={`Delete ${task.title}`}
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
-            onClick={() => setConfirmingDelete(true)}
-            ref={deleteButtonRef}
-            type="button"
-          >
-            Delete
-          </button>
-        )}
-      </div>
-
-      {statusState.status === "error" ? (
-        <p
-          className="mt-3 text-sm text-red-700"
-          id={statusErrorId}
-          role="alert"
+        <button
+          aria-haspopup="dialog"
+          className="block w-full p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-emerald-700 sm:p-3.5"
+          onClick={() => setOpen(true)}
+          type="button"
         >
-          {statusState.message}
-        </p>
-      ) : null}
-      {deleteState.status === "error" ? (
-        <p aria-live="polite" className="mt-3 text-sm text-red-700" role="alert">
-          {deleteState.message}
-        </p>
-      ) : null}
-    </article>
+          <div className="flex items-center justify-between gap-3">
+            <span
+              className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${priorityBadgeClasses[task.priority]}`}
+            >
+              {TASK_PRIORITY_LABELS[task.priority]}
+            </span>
+            <span
+              className={`shrink-0 text-right text-xs font-medium ${
+                overdue
+                  ? "text-red-700"
+                  : dueSoon
+                    ? "text-amber-700"
+                    : "text-slate-500"
+              }`}
+            >
+              {overdue ? "Overdue · " : dueSoon ? "Due soon · " : ""}
+              {task.due_date ? (
+                <time dateTime={task.due_date}>{dueDate}</time>
+              ) : (
+                dueDate
+              )}
+            </span>
+          </div>
+          <h3
+            className={`mt-2 line-clamp-2 break-words text-sm font-semibold leading-5 text-slate-950 ${
+              task.status === "done"
+                ? "line-through decoration-slate-400"
+                : ""
+            }`}
+            id={titleId}
+          >
+            {task.title}
+          </h3>
+          {task.description ? (
+            <p className="mt-1.5 line-clamp-2 break-words text-xs leading-5 text-slate-500">
+              {task.description}
+            </p>
+          ) : null}
+        </button>
+      </article>
+
+      <Modal onClose={closeTask} open={open} title="Task">
+        {editing ? (
+          <TaskEditForm
+            onCancel={() => setEditing(false)}
+            onSuccess={closeTask}
+            task={task}
+          />
+        ) : (
+          <div>
+            <div className="flex flex-wrap gap-2">
+              <span
+                className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${priorityBadgeClasses[task.priority]}`}
+              >
+                {TASK_PRIORITY_LABELS[task.priority]} priority
+              </span>
+              <span
+                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadgeClasses[task.status]}`}
+              >
+                {TASK_STATUS_LABELS[task.status]}
+              </span>
+            </div>
+
+            <h3 className="mt-4 break-words text-xl font-semibold text-slate-950">
+              {task.title}
+            </h3>
+
+            {task.description ? (
+              <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">
+                {task.description}
+              </p>
+            ) : (
+              <p className="mt-3 text-sm text-slate-400">No description</p>
+            )}
+
+            <dl className="mt-5 border-y border-slate-200 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-sm font-medium text-slate-500">Due date</dt>
+                <dd
+                  className={`text-sm font-semibold ${
+                    overdue
+                      ? "text-red-700"
+                      : dueSoon
+                        ? "text-amber-700"
+                        : "text-slate-800"
+                  }`}
+                >
+                  {overdue ? "Overdue · " : dueSoon ? "Due soon · " : ""}
+                  {task.due_date ? (
+                    <time dateTime={task.due_date}>{dueDate}</time>
+                  ) : (
+                    dueDate
+                  )}
+                </dd>
+              </div>
+            </dl>
+
+            {confirmingDelete ? (
+              <div
+                aria-labelledby={deletePromptId}
+                className="mt-5 rounded-xl border border-red-200 bg-red-50 p-3"
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    setConfirmingDelete(false);
+                  }
+                }}
+                role="group"
+              >
+                <p
+                  className="text-sm font-medium text-red-800"
+                  id={deletePromptId}
+                >
+                  Permanently delete this task?
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
+                    disabled={deletePending}
+                    onClick={() => setConfirmingDelete(false)}
+                    ref={cancelDeleteRef}
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                  <form action={deleteAction} aria-busy={deletePending}>
+                    <input name="taskId" type="hidden" value={task.id} />
+                    <button
+                      className="rounded-lg bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={deletePending}
+                      type="submit"
+                    >
+                      {deletePending ? "Deleting…" : "Delete"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 flex items-center justify-between gap-3">
+                <button
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+                  onClick={() => setConfirmingDelete(true)}
+                  type="button"
+                >
+                  Delete
+                </button>
+                <button
+                  className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                  onClick={() => setEditing(true)}
+                  type="button"
+                >
+                  Edit
+                </button>
+              </div>
+            )}
+
+            {deleteState.status === "error" ? (
+              <p className="mt-3 text-sm text-red-700" role="alert">
+                {deleteState.message}
+              </p>
+            ) : null}
+          </div>
+        )}
+      </Modal>
+    </>
   );
 }
