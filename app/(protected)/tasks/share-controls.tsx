@@ -77,7 +77,8 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
-              className="clearlooks-input h-10 min-w-0 flex-1 border px-3 text-sm outline-none"
+              className="clearlooks-input h-10 min-w-0 flex-1 border px-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={pending || !state.enabled}
               id="share-url"
               onFocus={(event) => event.currentTarget.select()}
               readOnly
@@ -85,7 +86,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
             />
             <button
               className="clearlooks-button h-10 px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={!state.enabled}
+              disabled={pending || !state.enabled}
               onClick={copyShareUrl}
               type="button"
             >
@@ -131,11 +132,11 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
         ) : null}
       </form>
 
-      <div className="mt-3 min-h-12">
-        {feedback ? (
-          <StatusMessage tone={feedback.tone}>{feedback.message}</StatusMessage>
-        ) : null}
-      </div>
+      {feedback ? (
+        <StatusMessage className="mt-3" tone={feedback.tone}>
+          {feedback.message}
+        </StatusMessage>
+      ) : null}
     </div>
   );
 }
