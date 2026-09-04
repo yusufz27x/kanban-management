@@ -19,6 +19,18 @@ const indicatorClasses: Record<ConnectionState, string> = {
   paused: "bg-amber-500",
 };
 
+function isCleanSocketClose(error: Error) {
+  const cause = error.cause;
+
+  if (!cause || typeof cause !== "object") {
+    return false;
+  }
+
+  const { code, wasClean } = cause as { code?: unknown; wasClean?: unknown };
+
+  return wasClean === true && (code === 1000 || code === 1001);
+}
+
 export function TaskRealtime({ userId }: { userId: string }) {
   const router = useRouter();
   const [connectionState, setConnectionState] =
@@ -69,7 +81,7 @@ export function TaskRealtime({ userId }: { userId: string }) {
             ) {
               setConnectionState("paused");
 
-              if (error) {
+              if (error && !isCleanSocketClose(error)) {
                 console.error("Task realtime subscription failed", error);
               }
             }
