@@ -64,79 +64,66 @@ export function TaskCard({ task, today }: TaskCardProps) {
   return (
     <article
       aria-labelledby={titleId}
-      className={`rounded-2xl border bg-white p-5 shadow-sm transition sm:p-6 ${
+      className={`rounded-xl border bg-white p-4 shadow-sm transition ${
         overdue ? "border-red-300" : "border-slate-200"
       }`}
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${badgeClasses[task.priority]}`}
-            >
-              {TASK_PRIORITY_LABELS[task.priority]} priority
-            </span>
-            <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-              {TASK_STATUS_LABELS[task.status]}
-            </span>
-          </div>
-          <h3
-            className={`mt-4 break-words text-lg font-semibold leading-7 text-slate-950 ${
-              task.status === "done" ? "line-through decoration-slate-400" : ""
-            }`}
-            id={titleId}
-          >
-            {task.title}
-          </h3>
-          {task.description ? (
-            <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">
-              {task.description}
-            </p>
-          ) : null}
-        </div>
+      <span
+        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${badgeClasses[task.priority]}`}
+      >
+        {TASK_PRIORITY_LABELS[task.priority]} priority
+      </span>
+      <h3
+        className={`mt-3 break-words text-base font-semibold leading-6 text-slate-950 ${
+          task.status === "done" ? "line-through decoration-slate-400" : ""
+        }`}
+        id={titleId}
+      >
+        {task.title}
+      </h3>
+      {task.description ? (
+        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">
+          {task.description}
+        </p>
+      ) : null}
 
-        <div
-          className={`flex shrink-0 items-center rounded-xl px-3 py-2 text-sm font-medium sm:text-right ${
-            overdue
-              ? "bg-red-50 text-red-700"
-              : dueSoon
-                ? "bg-amber-50 text-amber-800"
-                : "bg-slate-50 text-slate-600"
-          }`}
-        >
-          {task.due_date ? (
-            <>
-              {overdue ? "Overdue · " : dueSoon ? "Due soon · " : "Due "}
-              <time dateTime={task.due_date}>
-                {formatDateOnly(task.due_date)}
-              </time>
-            </>
-          ) : (
-            "No due date"
-          )}
-        </div>
+      <div
+        className={`mt-3 rounded-lg px-2.5 py-2 text-xs font-medium ${
+          overdue
+            ? "bg-red-50 text-red-700"
+            : dueSoon
+              ? "bg-amber-50 text-amber-800"
+              : "bg-slate-50 text-slate-600"
+        }`}
+      >
+        {task.due_date ? (
+          <>
+            {overdue ? "Overdue · " : dueSoon ? "Due soon · " : "Due "}
+            <time dateTime={task.due_date}>
+              {formatDateOnly(task.due_date)}
+            </time>
+          </>
+        ) : (
+          "No due date"
+        )}
       </div>
 
-      <div className="mt-5 flex flex-col gap-4 border-t border-slate-100 pt-5 lg:flex-row lg:items-end lg:justify-between">
-        <form
-          action={statusAction}
-          aria-busy={statusPending}
-          className="flex flex-wrap items-end gap-2"
-        >
+      <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+        <form action={statusAction} aria-busy={statusPending}>
           <input name="taskId" type="hidden" value={task.id} />
-          <div>
-            <label
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
-              htmlFor={`status-${task.id}`}
-            >
-              Status
-            </label>
+          <label
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
+            htmlFor={`status-${task.id}`}
+          >
+            Status
+          </label>
+          <div className="flex gap-2">
             <select
               aria-describedby={
                 statusState.status === "error" ? statusErrorId : undefined
               }
               aria-invalid={statusState.status === "error"}
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+              className="h-10 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 text-sm text-slate-800 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
               defaultValue={task.status}
               disabled={statusPending}
               id={`status-${task.id}`}
@@ -148,14 +135,14 @@ export function TaskCard({ task, today }: TaskCardProps) {
                 </option>
               ))}
             </select>
+            <button
+              className="h-10 shrink-0 rounded-lg bg-slate-900 px-3 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={statusPending}
+              type="submit"
+            >
+              {statusPending ? "Saving…" : "Save"}
+            </button>
           </div>
-          <button
-            className="h-10 rounded-lg bg-slate-900 px-3.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={statusPending}
-            type="submit"
-          >
-            {statusPending ? "Saving…" : "Save"}
-          </button>
         </form>
 
         {confirmingDelete ? (
@@ -176,7 +163,7 @@ export function TaskCard({ task, today }: TaskCardProps) {
             >
               Permanently delete “{task.title}”?
             </p>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               <button
                 className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
                 disabled={deletePending}
@@ -203,7 +190,7 @@ export function TaskCard({ task, today }: TaskCardProps) {
           <button
             aria-controls={deleteConfirmationId}
             aria-label={`Delete ${task.title}`}
-            className="self-start rounded-lg px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 lg:self-auto"
+            className="rounded-lg px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
             onClick={() => setConfirmingDelete(true)}
             ref={deleteButtonRef}
             type="button"

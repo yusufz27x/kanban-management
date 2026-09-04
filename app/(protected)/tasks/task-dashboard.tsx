@@ -21,7 +21,7 @@ import { useLocalDate } from "@/lib/tasks/use-local-date";
 import type { ShareActionState } from "@/lib/validation/share";
 
 import { ShareControls } from "./share-controls";
-import { TaskCard } from "./task-card";
+import { TaskColumn } from "./task-column";
 import { TaskForm } from "./task-form";
 import { TaskRealtime } from "./task-realtime";
 
@@ -72,11 +72,16 @@ export function TaskDashboard({
     [priorityFilter, quickFilter, statusFilter, tasks, today],
   );
 
-  const completedCount = tasks.filter((task) => task.status === "done").length;
-  const openCount = tasks.length - completedCount;
-  const dueSoonCount = tasks.filter((task) =>
-    isTaskDueSoon(task.due_date, task.status, today),
-  ).length;
+  const tasksByStatus = useMemo(
+    () =>
+      Object.fromEntries(
+        TASK_STATUSES.map((status) => [
+          status,
+          filteredTasks.filter((task) => task.status === status),
+        ]),
+      ) as Record<TaskStatus, Task[]>,
+    [filteredTasks],
+  );
   const filtersActive =
     statusFilter !== "all" ||
     priorityFilter !== "all" ||
@@ -108,40 +113,12 @@ export function TaskDashboard({
       </div>
 
       <div className="grid items-start gap-7 lg:grid-cols-[minmax(280px,360px)_1fr]">
-        <div className="lg:sticky lg:top-6">
+        <div>
           <TaskForm />
         </div>
 
         <div className="min-w-0 space-y-6">
           <ShareControls initialShare={initialShare} />
-
-          <section
-            aria-label="Task summary"
-            className="grid grid-cols-3 gap-3"
-          >
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-semibold text-slate-950">{openCount}</p>
-              <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
-                Open
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-semibold text-amber-700">
-                {dueSoonCount}
-              </p>
-              <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
-                Due soon
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-semibold text-emerald-700">
-                {completedCount}
-              </p>
-              <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
-                Completed
-              </p>
-            </div>
-          </section>
 
           <section
             aria-labelledby="task-filters-heading"
@@ -164,7 +141,11 @@ export function TaskDashboard({
               </button>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Quick filters">
+            <div
+              aria-label="Quick filters"
+              className="mt-4 flex flex-wrap gap-2"
+              role="group"
+            >
               {quickFilters.map((filter) => (
                 <button
                   aria-pressed={quickFilter === filter.value}
@@ -239,35 +220,34 @@ export function TaskDashboard({
               {tasks.length === 1 ? "task" : "tasks"}
             </p>
           </section>
-
-          {tasks.length === 0 ? (
-            <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
-              <p className="text-lg font-semibold text-slate-900">No tasks</p>
-            </section>
-          ) : filteredTasks.length === 0 ? (
-            <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-              <p className="font-semibold text-slate-900">No matches</p>
-              <button
-                className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                onClick={resetFilters}
-                type="button"
-              >
-                Reset
-              </button>
-            </section>
-          ) : (
-            <section aria-label="Task list" className="space-y-4">
-              {filteredTasks.map((task) => (
-                <TaskCard
-                  key={`${task.id}:${task.updated_at}`}
-                  task={task}
-                  today={today}
-                />
-              ))}
-            </section>
-          )}
         </div>
       </div>
+
+      {tasks.length > 0 && filteredTasks.length === 0 ? (
+        <section className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+          <p className="font-semibold text-slate-900">No matches</p>
+          <button
+            className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            onClick={resetFilters}
+            type="button"
+          >
+            Reset
+          </button>
+        </section>
+      ) : (
+        <section aria-label="Task board" className="mt-7">
+          <div className="grid items-start gap-4 md:grid-cols-3">
+            {TASK_STATUSES.map((status) => (
+              <TaskColumn
+                key={status}
+                status={status}
+                tasks={tasksByStatus[status]}
+                today={today}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
