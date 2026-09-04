@@ -1,23 +1,44 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
+import { createClient } from "@/lib/supabase/server";
+
+import { TaskDashboard } from "./task-dashboard";
 
 export const metadata: Metadata = {
   title: "Tasks",
 };
 
-export default function TasksPage() {
-  return (
-    <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
-      <section className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm sm:p-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">
-          Workspace ready
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-          Your tasks
-        </h1>
-        <p className="mt-3 max-w-xl leading-7 text-slate-600">
-          User is authenticated
-        </p>
-      </section>
-    </main>
-  );
+export default async function TasksPage() {
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getClaims();
+
+  if (!authData?.claims) {
+    redirect("/login");
+  }
+
+  const { data: tasks, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("user_id", authData.claims.sub)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Task loading failed", { code: error.code });
+
+    return (
+      <main className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8">
+        <section className="rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
+          <h1 className="text-xl font-semibold text-slate-950">
+            Tasks could not be loaded
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            Refresh the page to try again.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  return <TaskDashboard tasks={tasks} />;
 }
