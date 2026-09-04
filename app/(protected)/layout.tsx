@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
+import { TaskPageHeader } from "@/components/task-page-header";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -19,11 +20,8 @@ export default async function ProtectedLayout({
 
   return (
     <div className="clearlooks-app min-h-screen">
-      <header className="clearlooks-bar border-b">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
-          <p className="min-w-0 truncate text-sm text-slate-600">
-            {data.claims.email ?? "Signed in"}
-          </p>
+      <TaskPageHeader
+        action={
           <form action="/auth/logout" method="post">
             <button
               className="clearlooks-button shrink-0 px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -32,8 +30,9 @@ export default async function ProtectedLayout({
               Log out
             </button>
           </form>
-        </div>
-      </header>
+        }
+        label={data.claims.email ?? "Signed in"}
+      />
       {children}
     </div>
   );

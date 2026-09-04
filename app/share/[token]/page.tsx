@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { TaskBoardHeader } from "@/components/task-board-header";
 import { createPublicShareClient } from "@/lib/supabase/public";
 import { shareTokenSchema } from "@/lib/validation/share";
 
@@ -59,7 +60,7 @@ export default async function SharedTasksPage({
       className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10"
       id="main-content"
     >
-      <h1 className="sr-only">Shared tasks</h1>
+      <TaskBoardHeader count={tasks.length} title="Shared Tasks" />
       <PublicTaskList tasks={tasks} />
     </main>
   );

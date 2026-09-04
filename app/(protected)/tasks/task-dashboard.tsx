@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 
+import { TaskBoardHeader } from "@/components/task-board-header";
 import type {
   Task,
   TaskPriority,
@@ -104,19 +105,11 @@ export function TaskDashboard({
       className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10"
       id="main-content"
     >
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-            Tasks
-          </h1>
-        </div>
-        <div className="sm:text-right">
-          <p className="text-sm font-medium text-slate-500">
-            {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
-          </p>
-          <TaskRealtime userId={userId} />
-        </div>
-      </div>
+      <TaskBoardHeader
+        count={tasks.length}
+        status={<TaskRealtime userId={userId} />}
+        title="Tasks"
+      />
 
       <div
         aria-label="Task controls"
