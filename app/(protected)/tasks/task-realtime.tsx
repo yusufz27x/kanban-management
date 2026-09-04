@@ -8,9 +8,9 @@ import { createClient } from "@/lib/supabase/client";
 type ConnectionState = "connecting" | "live" | "paused";
 
 const connectionLabels: Record<ConnectionState, string> = {
-  connecting: "Connecting live updates",
-  live: "Live updates on",
-  paused: "Live updates paused",
+  connecting: "Connecting",
+  live: "Live",
+  paused: "Offline",
 };
 
 const indicatorClasses: Record<ConnectionState, string> = {

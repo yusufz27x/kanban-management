@@ -54,7 +54,7 @@ export async function updateSharing(
     revalidatePath("/tasks");
     return {
       enabled: data.enabled,
-      message: "A new share link is ready.",
+      message: "New link ready.",
       status: "success",
       token: data.token,
     };
@@ -90,8 +90,8 @@ export async function updateSharing(
   return {
     enabled: result.data.enabled,
     message: enabled
-      ? "Public sharing is enabled."
-      : "Public sharing is disabled.",
+      ? "Sharing enabled."
+      : "Sharing disabled.",
     status: "success",
     token: result.data.token,
   };

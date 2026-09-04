@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import type {
   Task,
@@ -33,6 +33,8 @@ type TaskCardProps = {
 
 export function TaskCard({ task, today }: TaskCardProps) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const cancelDeleteRef = useRef<HTMLButtonElement>(null);
+  const deleteButtonRef = useRef<HTMLButtonElement>(null);
   const [statusState, statusAction, statusPending] = useActionState(
     updateTaskStatus,
     {},
@@ -43,9 +45,25 @@ export function TaskCard({ task, today }: TaskCardProps) {
   );
   const overdue = isTaskOverdue(task.due_date, task.status, today);
   const dueSoon = isTaskDueSoon(task.due_date, task.status, today);
+  const titleId = `task-title-${task.id}`;
+  const statusErrorId = `status-error-${task.id}`;
+  const deleteConfirmationId = `delete-confirmation-${task.id}`;
+  const deletePromptId = `delete-prompt-${task.id}`;
+
+  useEffect(() => {
+    if (confirmingDelete) {
+      cancelDeleteRef.current?.focus();
+    }
+  }, [confirmingDelete]);
+
+  function cancelDelete() {
+    setConfirmingDelete(false);
+    window.requestAnimationFrame(() => deleteButtonRef.current?.focus());
+  }
 
   return (
     <article
+      aria-labelledby={titleId}
       className={`rounded-2xl border bg-white p-5 shadow-sm transition sm:p-6 ${
         overdue ? "border-red-300" : "border-slate-200"
       }`}
@@ -66,6 +84,7 @@ export function TaskCard({ task, today }: TaskCardProps) {
             className={`mt-4 break-words text-lg font-semibold leading-7 text-slate-950 ${
               task.status === "done" ? "line-through decoration-slate-400" : ""
             }`}
+            id={titleId}
           >
             {task.title}
           </h3>
@@ -99,7 +118,11 @@ export function TaskCard({ task, today }: TaskCardProps) {
       </div>
 
       <div className="mt-5 flex flex-col gap-4 border-t border-slate-100 pt-5 lg:flex-row lg:items-end lg:justify-between">
-        <form action={statusAction} className="flex flex-wrap items-end gap-2">
+        <form
+          action={statusAction}
+          aria-busy={statusPending}
+          className="flex flex-wrap items-end gap-2"
+        >
           <input name="taskId" type="hidden" value={task.id} />
           <div>
             <label
@@ -109,6 +132,10 @@ export function TaskCard({ task, today }: TaskCardProps) {
               Status
             </label>
             <select
+              aria-describedby={
+                statusState.status === "error" ? statusErrorId : undefined
+              }
+              aria-invalid={statusState.status === "error"}
               className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
               defaultValue={task.status}
               disabled={statusPending}
@@ -132,22 +159,37 @@ export function TaskCard({ task, today }: TaskCardProps) {
         </form>
 
         {confirmingDelete ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-3">
-            <p className="text-sm font-medium text-red-800">
-              Permanently delete this task?
+          <div
+            aria-labelledby={deletePromptId}
+            className="rounded-xl border border-red-200 bg-red-50 p-3"
+            id={deleteConfirmationId}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                cancelDelete();
+              }
+            }}
+            role="group"
+          >
+            <p
+              className="break-words text-sm font-medium text-red-800"
+              id={deletePromptId}
+            >
+              Permanently delete “{task.title}”?
             </p>
             <div className="mt-2 flex gap-2">
               <button
                 className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
                 disabled={deletePending}
-                onClick={() => setConfirmingDelete(false)}
+                onClick={cancelDelete}
+                ref={cancelDeleteRef}
                 type="button"
               >
                 Cancel
               </button>
-              <form action={deleteAction}>
+              <form action={deleteAction} aria-busy={deletePending}>
                 <input name="taskId" type="hidden" value={task.id} />
                 <button
+                  aria-label={`Permanently delete ${task.title}`}
                   className="rounded-lg bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={deletePending}
                   type="submit"
@@ -159,8 +201,11 @@ export function TaskCard({ task, today }: TaskCardProps) {
           </div>
         ) : (
           <button
+            aria-controls={deleteConfirmationId}
+            aria-label={`Delete ${task.title}`}
             className="self-start rounded-lg px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 lg:self-auto"
             onClick={() => setConfirmingDelete(true)}
+            ref={deleteButtonRef}
             type="button"
           >
             Delete
@@ -169,7 +214,11 @@ export function TaskCard({ task, today }: TaskCardProps) {
       </div>
 
       {statusState.status === "error" ? (
-        <p aria-live="polite" className="mt-3 text-sm text-red-700" role="alert">
+        <p
+          className="mt-3 text-sm text-red-700"
+          id={statusErrorId}
+          role="alert"
+        >
           {statusState.message}
         </p>
       ) : null}

@@ -4,6 +4,7 @@ export default function TasksLoading() {
       aria-busy="true"
       aria-label="Loading tasks"
       className="mx-auto w-full max-w-7xl animate-pulse px-5 py-8 sm:px-8 sm:py-10"
+      id="main-content"
     >
       <div className="h-4 w-36 rounded bg-slate-200" />
       <div className="mt-4 h-10 w-64 rounded bg-slate-200" />

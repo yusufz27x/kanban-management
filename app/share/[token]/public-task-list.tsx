@@ -24,12 +24,7 @@ export function PublicTaskList({ tasks }: { tasks: PublicTask[] }) {
   if (tasks.length === 0) {
     return (
       <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
-        <p className="text-lg font-semibold text-slate-900">
-          This task list is clear
-        </p>
-        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-          There are no tasks to show right now.
-        </p>
+        <p className="text-lg font-semibold text-slate-900">No tasks</p>
       </section>
     );
   }

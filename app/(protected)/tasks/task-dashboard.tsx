@@ -28,7 +28,7 @@ import { TaskRealtime } from "./task-realtime";
 type QuickFilter = "all" | "completed" | "due_soon" | "overdue";
 
 const quickFilters: { label: string; value: QuickFilter }[] = [
-  { label: "All tasks", value: "all" },
+  { label: "All", value: "all" },
   { label: "Overdue", value: "overdue" },
   { label: "Due soon", value: "due_soon" },
   { label: "Completed", value: "completed" },
@@ -89,22 +89,19 @@ export function TaskDashboard({
   }
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
+    <main
+      className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10"
+      id="main-content"
+    >
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">
-            Personal workspace
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-            Your tasks
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+            Tasks
           </h1>
-          <p className="mt-2 text-slate-600">
-            Headline 1
-          </p>
         </div>
         <div className="sm:text-right">
           <p className="text-sm font-medium text-slate-500">
-            {tasks.length} {tasks.length === 1 ? "task" : "tasks"} total
+            {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
           </p>
           <TaskRealtime userId={userId} />
         </div>
@@ -155,7 +152,7 @@ export function TaskDashboard({
                 className="text-sm font-semibold text-slate-900"
                 id="task-filters-heading"
               >
-                Filter tasks
+                Filters
               </h2>
               <button
                 className="rounded-md text-sm font-semibold text-emerald-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:text-slate-400"
@@ -232,31 +229,30 @@ export function TaskDashboard({
                 </select>
               </div>
             </div>
+
+            <p
+              aria-atomic="true"
+              aria-live="polite"
+              className="mt-4 text-xs font-medium text-slate-500"
+            >
+              {filteredTasks.length} of {tasks.length}{" "}
+              {tasks.length === 1 ? "task" : "tasks"}
+            </p>
           </section>
 
           {tasks.length === 0 ? (
             <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
-              <p className="text-lg font-semibold text-slate-900">
-                Your task list is clear
-              </p>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                Add your first task.
-              </p>
+              <p className="text-lg font-semibold text-slate-900">No tasks</p>
             </section>
           ) : filteredTasks.length === 0 ? (
             <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-              <p className="font-semibold text-slate-900">
-                No tasks match these filters
-              </p>
-              <p className="mt-2 text-sm text-slate-500">
-                Try another combination or reset all filters.
-              </p>
+              <p className="font-semibold text-slate-900">No matches</p>
               <button
                 className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
                 onClick={resetFilters}
                 type="button"
               >
-                Show all tasks
+                Reset
               </button>
             </section>
           ) : (

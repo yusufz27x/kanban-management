@@ -20,10 +20,12 @@ export function TaskForm() {
     initialState,
   );
   const formRef = useRef<HTMLFormElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (state.status === "success") {
       formRef.current?.reset();
+      titleRef.current?.focus();
     }
   }, [state]);
 
@@ -37,22 +39,19 @@ export function TaskForm() {
       aria-labelledby="create-task-heading"
       className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
     >
-      <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
-          New task
-        </p>
-        <h2
-          className="mt-2 text-xl font-semibold tracking-tight text-slate-950"
-          id="create-task-heading"
-        >
-          Add to your list
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-slate-500">
-          Headline 1
-        </p>
-      </div>
+      <h2
+        className="mb-6 text-xl font-semibold tracking-tight text-slate-950"
+        id="create-task-heading"
+      >
+        New task
+      </h2>
 
-      <form action={formAction} className="space-y-5" ref={formRef}>
+      <form
+        action={formAction}
+        aria-busy={pending}
+        className="space-y-5"
+        ref={formRef}
+      >
         <div>
           <label
             className="mb-2 block text-sm font-medium text-slate-800"
@@ -64,10 +63,12 @@ export function TaskForm() {
             aria-describedby={titleError ? "task-title-error" : undefined}
             aria-invalid={Boolean(titleError)}
             className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+            disabled={pending}
             id="task-title"
             maxLength={TASK_TITLE_MAX_LENGTH}
             name="title"
             placeholder="Prepare project notes"
+            ref={titleRef}
             required
           />
           {titleError ? (
@@ -93,6 +94,7 @@ export function TaskForm() {
             }
             aria-invalid={Boolean(descriptionError)}
             className="min-h-28 w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+            disabled={pending}
             id="task-description"
             maxLength={TASK_DESCRIPTION_MAX_LENGTH}
             name="description"
@@ -123,6 +125,7 @@ export function TaskForm() {
               aria-invalid={Boolean(priorityError)}
               className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
               defaultValue="medium"
+              disabled={pending}
               id="task-priority"
               name="priority"
             >
@@ -158,6 +161,7 @@ export function TaskForm() {
               }
               aria-invalid={Boolean(dueDateError)}
               className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500"
+              disabled={pending}
               id="task-due-date"
               name="dueDate"
               type="date"

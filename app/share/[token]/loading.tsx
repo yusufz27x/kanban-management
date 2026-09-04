@@ -1,6 +1,11 @@
 export default function SharedTasksLoading() {
   return (
-    <main className="mx-auto w-full max-w-4xl animate-pulse px-5 py-10 sm:px-8">
+    <main
+      aria-busy="true"
+      aria-label="Loading shared tasks"
+      className="mx-auto w-full max-w-4xl animate-pulse px-5 py-10 sm:px-8"
+      id="main-content"
+    >
       <div className="h-4 w-24 rounded bg-slate-200" />
       <div className="mt-4 h-10 w-64 rounded bg-slate-200" />
       <div className="mt-3 h-5 w-full max-w-lg rounded bg-slate-200" />

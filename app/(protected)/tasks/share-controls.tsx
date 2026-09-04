@@ -40,18 +40,14 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
-            Read-only access
-          </p>
           <h2
-            className="mt-1 text-lg font-semibold text-slate-950"
+            className="text-lg font-semibold text-slate-950"
             id="sharing-heading"
           >
-            Public sharing
+            Sharing
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
-            Anyone with the active link can view this task list. They cannot
-            create, update, or delete tasks.
+            Anyone with the link can view. Read-only.
           </p>
         </div>
         <span
@@ -61,7 +57,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
               : "border-slate-200 bg-slate-50 text-slate-600"
           }`}
         >
-          {state.enabled ? "Sharing on" : "Sharing off"}
+          {state.enabled ? "On" : "Off"}
         </span>
       </div>
 
@@ -71,7 +67,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
             className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500"
             htmlFor="share-url"
           >
-            Share URL
+            Link
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
@@ -87,12 +83,12 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
               onClick={copyShareUrl}
               type="button"
             >
-              Copy link
+              Copy
             </button>
           </div>
           {!state.enabled ? (
             <p className="mt-2 text-sm text-slate-500">
-              This URL is currently unavailable to visitors.
+              Link disabled.
             </p>
           ) : null}
         </div>
@@ -110,7 +106,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
           type="submit"
           value="enable"
         >
-          {state.token ? "Re-enable sharing" : "Enable sharing"}
+          {state.token ? "Re-enable" : "Enable"}
         </button>
         {state.token ? (
           <>
@@ -121,7 +117,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
               type="submit"
               value="regenerate"
             >
-              Generate new link
+              New link
             </button>
             <button
               className="rounded-lg px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
@@ -130,7 +126,7 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
               type="submit"
               value="disable"
             >
-              Disable sharing
+              Disable
             </button>
           </>
         ) : null}

@@ -36,18 +36,7 @@ export default async function TasksPage() {
       taskCode: taskResult.error?.code,
     });
 
-    return (
-      <main className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8">
-        <section className="rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
-          <h1 className="text-xl font-semibold text-slate-950">
-            Tasks could not be loaded
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            Refresh the page to try again.
-          </p>
-        </section>
-      </main>
-    );
+    throw new Error("The task dashboard could not be loaded.");
   }
 
   return (

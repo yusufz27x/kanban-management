@@ -27,40 +27,28 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
 
   return (
     <div className="w-full max-w-md">
-      <div className="mb-10 flex items-center gap-3 lg:hidden">
-        <span className="grid size-10 place-items-center rounded-xl bg-emerald-700 text-lg font-semibold text-white shadow-sm">
-          K
-        </span>
-        <span className="text-sm font-semibold tracking-wide text-slate-800">
-          Kanban Task Management
-        </span>
-      </div>
-
-      <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-        {isLogin ? "Welcome back" : "Get started"}
-      </p>
       <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        {isLogin ? "Sign in to your workspace" : "Create your account"}
+        {isLogin ? "Sign in" : "Create account"}
       </h1>
-      <p className="mt-4 leading-7 text-slate-600">
-        {isLogin
-          ? "Continue where you left off"
-          : "Sign up for Kanban Task Management."}
-      </p>
 
-      <form action={formAction} className="mt-9 space-y-5">
+      <form
+        action={formAction}
+        aria-busy={pending}
+        className="mt-7 space-y-5"
+      >
         <div>
           <label
             className="mb-2 block text-sm font-medium text-slate-800"
             htmlFor="email"
           >
-            Email address
+            Email
           </label>
           <input
             aria-describedby={emailError ? "email-error" : undefined}
             aria-invalid={Boolean(emailError)}
             autoComplete="email"
             className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500 aria-invalid:ring-red-100"
+            disabled={pending}
             id="email"
             maxLength={254}
             name="email"
@@ -93,6 +81,7 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
             aria-invalid={Boolean(passwordError)}
             autoComplete={isLogin ? "current-password" : "new-password"}
             className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 aria-invalid:border-red-500 aria-invalid:ring-red-100"
+            disabled={pending}
             id="password"
             maxLength={72}
             minLength={8}
@@ -142,12 +131,12 @@ export function AuthForm({ action, initialMessage, mode }: AuthFormProps) {
       </form>
 
       <p className="mt-8 text-center text-sm text-slate-600">
-        {isLogin ? "New to Kanban Task Management?" : "Already have an account?"}{" "}
+        {isLogin ? "No account?" : "Have an account?"}{" "}
         <Link
           className="font-semibold text-emerald-700 underline-offset-4 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
           href={isLogin ? "/signup" : "/login"}
         >
-          {isLogin ? "Create an account" : "Sign in"}
+          {isLogin ? "Create one" : "Sign in"}
         </Link>
       </p>
     </div>
