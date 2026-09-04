@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
 
 import type {
   Task,
@@ -16,9 +16,11 @@ import {
 import {
   isTaskDueSoon,
   isTaskOverdue,
-  toLocalDateKey,
 } from "@/lib/tasks/dates";
+import { useLocalDate } from "@/lib/tasks/use-local-date";
+import type { ShareActionState } from "@/lib/validation/share";
 
+import { ShareControls } from "./share-controls";
 import { TaskCard } from "./task-card";
 import { TaskForm } from "./task-form";
 
@@ -31,30 +33,18 @@ const quickFilters: { label: string; value: QuickFilter }[] = [
   { label: "Completed", value: "completed" },
 ];
 
-function subscribeToLocalDate(onStoreChange: () => void) {
-  const interval = window.setInterval(onStoreChange, 60_000);
-  return () => window.clearInterval(interval);
-}
+type TaskDashboardProps = {
+  initialShare: ShareActionState;
+  tasks: Task[];
+};
 
-function getLocalDateSnapshot() {
-  return toLocalDateKey(new Date());
-}
-
-function getServerDateSnapshot() {
-  return "";
-}
-
-export function TaskDashboard({ tasks }: { tasks: Task[] }) {
+export function TaskDashboard({ initialShare, tasks }: TaskDashboardProps) {
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">(
     "all",
   );
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
-  const today = useSyncExternalStore(
-    subscribeToLocalDate,
-    getLocalDateSnapshot,
-    getServerDateSnapshot,
-  );
+  const today = useLocalDate();
 
   const filteredTasks = useMemo(
     () =>
@@ -117,6 +107,8 @@ export function TaskDashboard({ tasks }: { tasks: Task[] }) {
         </div>
 
         <div className="min-w-0 space-y-6">
+          <ShareControls initialShare={initialShare} />
+
           <section
             aria-label="Task summary"
             className="grid grid-cols-3 gap-3"

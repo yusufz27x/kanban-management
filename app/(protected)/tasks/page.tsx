@@ -17,14 +17,24 @@ export default async function TasksPage() {
     redirect("/login");
   }
 
-  const { data: tasks, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("user_id", authData.claims.sub)
-    .order("created_at", { ascending: false });
+  const [taskResult, shareResult] = await Promise.all([
+    supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", authData.claims.sub)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("task_shares")
+      .select("enabled, token")
+      .eq("user_id", authData.claims.sub)
+      .maybeSingle(),
+  ]);
 
-  if (error) {
-    console.error("Task loading failed", { code: error.code });
+  if (taskResult.error || shareResult.error) {
+    console.error("Dashboard loading failed", {
+      shareCode: shareResult.error?.code,
+      taskCode: taskResult.error?.code,
+    });
 
     return (
       <main className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8">
@@ -40,5 +50,15 @@ export default async function TasksPage() {
     );
   }
 
-  return <TaskDashboard tasks={tasks} />;
+  return (
+    <TaskDashboard
+      initialShare={
+        shareResult.data ?? {
+          enabled: false,
+          token: null,
+        }
+      }
+      tasks={taskResult.data}
+    />
+  );
 }
