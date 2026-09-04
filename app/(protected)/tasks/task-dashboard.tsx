@@ -23,6 +23,7 @@ import type { ShareActionState } from "@/lib/validation/share";
 import { ShareControls } from "./share-controls";
 import { TaskCard } from "./task-card";
 import { TaskForm } from "./task-form";
+import { TaskRealtime } from "./task-realtime";
 
 type QuickFilter = "all" | "completed" | "due_soon" | "overdue";
 
@@ -36,9 +37,14 @@ const quickFilters: { label: string; value: QuickFilter }[] = [
 type TaskDashboardProps = {
   initialShare: ShareActionState;
   tasks: Task[];
+  userId: string;
 };
 
-export function TaskDashboard({ initialShare, tasks }: TaskDashboardProps) {
+export function TaskDashboard({
+  initialShare,
+  tasks,
+  userId,
+}: TaskDashboardProps) {
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">(
     "all",
@@ -96,9 +102,12 @@ export function TaskDashboard({ initialShare, tasks }: TaskDashboardProps) {
             Headline 1
           </p>
         </div>
-        <p className="text-sm font-medium text-slate-500">
-          {tasks.length} {tasks.length === 1 ? "task" : "tasks"} total
-        </p>
+        <div className="sm:text-right">
+          <p className="text-sm font-medium text-slate-500">
+            {tasks.length} {tasks.length === 1 ? "task" : "tasks"} total
+          </p>
+          <TaskRealtime userId={userId} />
+        </div>
       </div>
 
       <div className="grid items-start gap-7 lg:grid-cols-[minmax(280px,360px)_1fr]">

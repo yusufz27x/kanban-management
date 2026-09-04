@@ -59,6 +59,7 @@ export default async function TasksPage() {
         }
       }
       tasks={taskResult.data}
+      userId={authData.claims.sub}
     />
   );
 }
