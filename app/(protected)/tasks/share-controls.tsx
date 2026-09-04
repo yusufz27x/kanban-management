@@ -91,35 +91,28 @@ export function ShareControls({ initialShare }: ShareControlsProps) {
         onSubmit={() => setCopyMessage(undefined)}
       >
         <button
-          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={pending || state.enabled}
+          className={`rounded-lg border px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+            state.enabled
+              ? "border-red-300 bg-white text-red-700 hover:border-red-400 hover:bg-red-50 focus-visible:outline-red-700"
+              : "border-emerald-700 bg-emerald-700 text-white hover:border-emerald-800 hover:bg-emerald-800 focus-visible:outline-emerald-700"
+          }`}
+          disabled={pending}
           name="operation"
           type="submit"
-          value="enable"
+          value={state.enabled ? "disable" : "enable"}
         >
-          {state.token ? "Re-enable" : "Enable"}
+          {state.enabled ? "Disable" : "Enable"}
         </button>
         {state.token ? (
-          <>
-            <button
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={pending}
-              name="operation"
-              type="submit"
-              value="regenerate"
-            >
-              New link
-            </button>
-            <button
-              className="rounded-lg px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={pending || !state.enabled}
-              name="operation"
-              type="submit"
-              value="disable"
-            >
-              Disable
-            </button>
-          </>
+          <button
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-slate-300 disabled:hover:bg-white"
+            disabled={pending || !state.enabled}
+            name="operation"
+            type="submit"
+            value="regenerate"
+          >
+            New link
+          </button>
         ) : null}
       </form>
 

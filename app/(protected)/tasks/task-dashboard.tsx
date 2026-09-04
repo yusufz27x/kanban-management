@@ -37,6 +37,7 @@ export function TaskDashboard({
 }: TaskDashboardProps) {
   const [activeDialog, setActiveDialog] = useState<DashboardDialog>();
   const [taskFormVersion, setTaskFormVersion] = useState(0);
+  const [shareControlsVersion, setShareControlsVersion] = useState(0);
   const [statusFilters, setStatusFilters] = useState<TaskStatus[]>([]);
   const [priorityFilters, setPriorityFilters] = useState<TaskPriority[]>([]);
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
@@ -83,6 +84,10 @@ export function TaskDashboard({
         ? "md:grid-cols-3"
         : "";
   const closeDialog = useCallback(() => setActiveDialog(undefined), []);
+  const closeSharing = useCallback(() => {
+    setActiveDialog(undefined);
+    setShareControlsVersion((version) => version + 1);
+  }, []);
   const handleTaskCreated = useCallback(() => {
     setActiveDialog(undefined);
     setTaskFormVersion((version) => version + 1);
@@ -158,11 +163,11 @@ export function TaskDashboard({
       </Modal>
 
       <Modal
-        onClose={closeDialog}
+        onClose={closeSharing}
         open={activeDialog === "sharing"}
         title="Sharing"
       >
-        <ShareControls initialShare={initialShare} />
+        <ShareControls key={shareControlsVersion} initialShare={initialShare} />
       </Modal>
 
       {tasks.length > 0 && filteredTasks.length === 0 ? (
