@@ -3,8 +3,6 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
-import { logout } from "./actions";
-
 export const dynamic = "force-dynamic";
 
 export default async function ProtectedLayout({
@@ -26,7 +24,7 @@ export default async function ProtectedLayout({
           <p className="min-w-0 truncate text-sm text-slate-600">
             {data.claims.email ?? "Signed in"}
           </p>
-          <form action={logout}>
+          <form action="/auth/logout" method="post">
             <button
               className="shrink-0 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
               type="submit"
