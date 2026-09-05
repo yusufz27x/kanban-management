@@ -6,10 +6,8 @@ import "./globals.css";
 
 export default function GlobalError({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   return (
     <html lang="en">
@@ -23,7 +21,6 @@ export default function GlobalError({
         <TaskRouteError
           error={error}
           logMessage="Application rendering failed"
-          reset={reset}
           title="Unable to load page"
         />
       </body>
